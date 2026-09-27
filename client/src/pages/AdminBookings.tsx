@@ -1,0 +1,5 @@
+import { CalendarDays } from "lucide-react";
+import { trpc } from "@/lib/trpc";
+import Shell from "@/components/DashboardShell";
+
+export default function AdminBookings() { const bookings = trpc.admin.bookings.all.useQuery(); return <Shell admin><div className="admin-page-wrap"><div className="dashboard-heading compact"><div><p className="section-kicker">/ BOOKINGS</p><h1>ALL<br /><span>BOOKINGS.</span></h1></div></div><section className="dashboard-panel request-table"><div className="panel-heading"><h2>ALL BOOKINGS</h2><span className="section-kicker">{bookings.data?.length ?? 0} ITEMS</span></div>{bookings.data?.map((meeting) => <div className="request-row" key={meeting.id}><div><strong>{meeting.title}</strong><span>{new Date(meeting.scheduledAt).toLocaleString()} · {meeting.durationMinutes} min</span><span>{meeting.guestName ? `${meeting.guestName} (${meeting.guestEmail})` : `Client #${meeting.clientId}`}</span></div><span className={`status-pill ${meeting.status}`}>{meeting.status}</span></div>)}{!bookings.data?.length && <div className="empty-panel"><CalendarDays size={24} /><p>No bookings yet.</p></div>}</section></div></Shell>; }

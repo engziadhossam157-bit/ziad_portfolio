@@ -1,0 +1,29 @@
+# Dependencies and build output
+node_modules/
+dist/
+.vite/
+coverage/
+
+# Local secrets and data: never commit these
+.env
+.env.*
+!.env.example
+local.db
+local.db-*
+*.db-journal
+*.db-wal
+*.db-shm
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# Editor and OS files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Personal files that do not belong in the public repo
+WhatsApp Image*.jpeg

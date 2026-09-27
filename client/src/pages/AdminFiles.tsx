@@ -1,0 +1,6 @@
+import { Link } from "wouter";
+import { ArrowUpRight, FileText } from "lucide-react";
+import { trpc } from "@/lib/trpc";
+import Shell from "@/components/DashboardShell";
+
+export default function AdminFiles() { const projects = trpc.admin.projects.useQuery(); return <Shell admin><div className="admin-page-wrap"><div className="dashboard-heading compact"><div><p className="section-kicker">/ PROJECT MANAGEMENT</p><h1>ALL<br /><span>FILES.</span></h1></div></div><p style={{ margin: "0 4vw 2rem", color: "var(--muted)", maxWidth: 560 }}>Files are uploaded and organized per project — open a project to manage its files.</p><section className="dashboard-panel request-table"><div className="panel-heading"><h2>ALL PROJECTS</h2><span className="section-kicker">{projects.data?.length ?? 0} ITEMS</span></div>{projects.data?.map((project) => <div className="request-row" key={project.id}><div><strong>{project.title}</strong><span>{project.category} · {project.year}</span></div><Link href={`/admin/projects/${project.id}`} className="outline-button"><ArrowUpRight size={15} /> MANAGE FILES</Link></div>)}{!projects.data?.length && <div className="empty-panel"><FileText size={24} /><p>No projects yet — create one to start uploading files.</p></div>}</section></div></Shell>; }

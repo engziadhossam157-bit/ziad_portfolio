@@ -1,0 +1,6 @@
+import { Link } from "wouter";
+import { ArrowUpRight, FileSignature } from "lucide-react";
+import { trpc } from "@/lib/trpc";
+import Shell from "@/components/DashboardShell";
+
+export default function AdminAgreements() { const rows = trpc.admin.agreements.all.useQuery(); return <Shell admin><div className="admin-page-wrap"><div className="dashboard-heading compact"><div><p className="section-kicker">/ CLIENT MANAGEMENT</p><h1>ALL<br /><span>AGREEMENTS.</span></h1></div></div><section className="dashboard-panel request-table"><div className="panel-heading"><h2>ALL AGREEMENTS</h2><span className="section-kicker">{rows.data?.length ?? 0} ITEMS</span></div>{rows.data?.map(({ agreement, project }) => <div className="request-row" key={agreement.id}><div><Link href={`/admin/projects/${project.id}`}><strong>{project.title}</strong></Link><span>Client #{agreement.clientId}</span></div><span className={`status-pill ${agreement.status}`}>{agreement.status}</span><Link href={`/admin/projects/${project.id}`} className="outline-button"><ArrowUpRight size={15} /> REVIEW</Link></div>)}{!rows.data?.length && <div className="empty-panel"><FileSignature size={24} /><p>No agreements drafted yet.</p></div>}</section></div></Shell>; }

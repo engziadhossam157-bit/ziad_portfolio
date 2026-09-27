@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 600">
+  <rect width="480" height="600" fill="#151517"/>
+  <rect x="0.5" y="0.5" width="479" height="599" fill="none" stroke="#343438"/>
+  <circle cx="240" cy="230" r="80" fill="#232326"/>
+  <path d="M110 480c0-90 58-150 130-150s130 60 130 150" fill="#232326"/>
+  <text x="240" y="560" fill="#5a5a5e" font-family="monospace" font-size="16" text-anchor="middle">UPLOAD PROFILE PHOTO</text>
+</svg>
