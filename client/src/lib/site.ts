@@ -1,4 +1,4 @@
-import { Blocks, Brain, Code2, Figma, Globe, Layers3, Rocket, Server, Smartphone, Sparkles, Workflow, Wrench, type LucideIcon } from "lucide-react";
+import { Blocks, Brain, Code2, Figma, Globe, Layers3, Monitor, Rocket, Server, ShoppingBag, Smartphone, Sparkles, Workflow, Wrench, type LucideIcon } from "lucide-react";
 
 // Fallbacks for when the admin "About / Profile" record leaves a field empty.
 export const CONTACT_EMAIL = "eng.ziadhossam157@gmail.com";
@@ -7,8 +7,8 @@ export const LOCATION = "Cairo, Egypt";
 
 export type Capability = { icon: LucideIcon; title: string; desc: string; flagship?: boolean };
 
-// Single source for what Ziad offers: the About page cards, the home marquee, and the
-// services list whenever no services have been published from the admin workspace.
+// What Ziad works on, shown as the About page capability cards. The hireable services list
+// (home + /services) lives in shared/portfolio.ts next to the projects it links to.
 export const CAPABILITIES: Capability[] = [
   { icon: Brain, title: "AI Engineering", desc: "Studying how to design and build intelligent systems, from LLM-driven features to applied machine learning.", flagship: true },
   { icon: Globe, title: "Full-Stack Web Development", desc: "Complete products end to end: the front end, the back end, and everything that connects them." },
@@ -18,10 +18,10 @@ export const CAPABILITIES: Capability[] = [
 ];
 
 // Icon names an admin can set on a service record.
-const SERVICE_ICONS: Record<string, LucideIcon> = { code2: Code2, figma: Figma, layers3: Layers3, sparkles: Sparkles, wrench: Wrench, rocket: Rocket, globe: Globe, smartphone: Smartphone, brain: Brain, server: Server, workflow: Workflow, blocks: Blocks };
+const SERVICE_ICONS: Record<string, LucideIcon> = { code2: Code2, figma: Figma, layers3: Layers3, sparkles: Sparkles, wrench: Wrench, rocket: Rocket, globe: Globe, smartphone: Smartphone, brain: Brain, server: Server, workflow: Workflow, blocks: Blocks, shoppingbag: ShoppingBag, monitor: Monitor };
 export function resolveServiceIcon(name?: string | null): LucideIcon { return SERVICE_ICONS[(name ?? "").toLowerCase()] ?? Sparkles; }
 
-export const MARQUEE_ITEMS =["FULL-STACK DEVELOPMENT", "AI ENGINEERING", "BACKEND & APIS", "AUTOMATION", "SOFTWARE ARCHITECTURE"];
+export const MARQUEE_ITEMS = ["FULL-STACK WEB APPS", "E-COMMERCE STORES", "BUSINESS WEBSITES", "DESKTOP APPS", "AI ENGINEERING"];
 
 export type SocialLink = { label: string; href: string };
 

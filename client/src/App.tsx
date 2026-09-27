@@ -10,6 +10,8 @@ const About = lazy(() => import("./pages/About"));
 const StartProject = lazy(() => import("./pages/StartProject"));
 const BookMeeting = lazy(() => import("./pages/BookMeeting"));
 const PublicSection = lazy(() => import("./pages/PublicSection"));
+const Projects = lazy(() => import("./pages/Projects"));
+const ProjectDetail = lazy(() => import("./pages/ProjectDetail"));
 const Login = lazy(() => import("./pages/Login"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 const Portal = lazy(() => import("./pages/Portal"));
@@ -50,7 +52,8 @@ function Router() {
     <Route path="/book-a-meeting" component={BookMeeting} />
     <Route path="/about" component={About} />
     <Route path="/services" component={PublicSection} />
-    <Route path="/projects" component={PublicSection} />
+    <Route path="/projects" component={Projects} />
+    <Route path="/projects/:slug" component={ProjectDetail} />
     <Route path="/certificates" component={PublicSection} />
     <Route path="/contact" component={PublicSection} />
     <Route path="/login" component={Login} />

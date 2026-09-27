@@ -7,6 +7,15 @@ type UseAuthOptions = {
   redirectPath?: string;
 };
 
+/**
+ * The public site's workspace entry point. It always reads "Client portal" (the public site never
+ * advertises the admin area): visitors go to sign-in, and anyone signed in, the owner included,
+ * lands in the client portal.
+ */
+export function portalLink(user: { role?: string | null } | null | undefined) {
+  return { href: user ? "/portal" : "/login?next=/portal", label: "CLIENT PORTAL" };
+}
+
 export function useAuth(options?: UseAuthOptions) {
   const { redirectOnUnauthenticated = false, redirectPath = "/login" } = options ?? {};
   const utils = trpc.useUtils();

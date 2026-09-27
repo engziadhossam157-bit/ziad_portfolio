@@ -1,12 +1,13 @@
 import { Link, useLocation } from "wouter";
-import { ArrowUpRight, Award, ExternalLink, Mail } from "lucide-react";
+import { ArrowUpRight, Mail } from "lucide-react";
 import { trpc } from "@/lib/trpc";
 import { Reveal } from "@/components/Motion";
 import { SiteFooter, SiteHeader } from "@/components/SiteChrome";
-import { ProjectCard } from "@/components/ProjectCard";
-import { CAPABILITIES, CONTACT_EMAIL, parseSocialLinks, resolveServiceIcon } from "@/lib/site";
+import { CertificateCard } from "@/components/CertificateCard";
+import { CONTACT_EMAIL, parseSocialLinks, resolveServiceIcon } from "@/lib/site";
+import { SERVICES, findProject } from "@shared/portfolio";
 
-const TITLES: Record<string, string> = { services: "SERVICES", projects: "WORK", certificates: "CERTIFICATES", contact: "CONTACT" };
+const TITLES: Record<string, string> = { services: "SERVICES", certificates: "CERTIFICATES", contact: "CONTACT" };
 
 /** Friendly fallback for a section with nothing published yet: points visitors somewhere useful. */
 function NextSteps({ message }: { message: string }) {
@@ -17,15 +18,13 @@ export default function PublicSection() {
   const [location] = useLocation();
   const section = location.replace(/^\//, "") || "services";
   const portfolio = trpc.portfolio.public.useQuery();
-  const allProjects = trpc.portfolio.allProjects.useQuery();
   const about = trpc.portfolio.about.useQuery();
 
   const services = portfolio.data?.services ?? [];
-  const projects = allProjects.data ?? [];
   const certificates = portfolio.data?.certificates ?? [];
   const contactEmail = about.data?.email || CONTACT_EMAIL;
   const socials = parseSocialLinks(about.data?.socialLinks);
-  const loading = portfolio.isPending || allProjects.isPending;
+  const loading = portfolio.isPending;
 
   return (
     <main className="site-shell" id="top">
@@ -35,17 +34,23 @@ export default function PublicSection() {
 
         {section === "services" && !portfolio.isPending && <div className="capability-grid public-grid">
           {(services.length
-            ? services.map((service) => ({ key: `service-${service.id}`, title: service.title, desc: service.shortDescription || service.description, price: service.startingPrice, Icon: resolveServiceIcon(service.icon) }))
-            : CAPABILITIES.map((cap) => ({ key: cap.title, title: cap.title, desc: cap.desc, price: null as string | null, Icon: cap.icon }))
-          ).map((item, index) => <Reveal key={item.key} delay={index * 60}><article className="capability-card"><item.Icon size={26} strokeWidth={1.4} /><h3>{item.title}</h3><p>{item.desc}</p>{item.price && <span className="price-tag">FROM {item.price}</span>}</article></Reveal>)}
+            ? services.map((service) => ({ key: `service-${service.id}`, title: service.title, desc: service.shortDescription || service.description, price: service.startingPrice, Icon: resolveServiceIcon(service.icon), includes: [] as string[], technologies: [] as string[], projects: [] as string[] }))
+            : SERVICES.map((service) => ({ key: service.slug, title: service.title, desc: service.summary, price: null as string | null, Icon: resolveServiceIcon(service.icon), includes: service.includes, technologies: service.technologies, projects: service.projects }))
+          ).map((item, index) => <Reveal key={item.key} delay={index * 60}>
+            <article className="capability-card service-card">
+              <item.Icon size={26} strokeWidth={1.4} />
+              <h3>{item.title}</h3>
+              <p>{item.desc}</p>
+              {item.includes.length > 0 && <ul className="check-list">{item.includes.map((line) => <li key={line}>{line}</li>)}</ul>}
+              {item.technologies.length > 0 && <ul className="tag-list" aria-label="Technologies">{item.technologies.map((tech) => <li key={tech}>{tech}</li>)}</ul>}
+              {item.projects.length > 0 && <div className="service-projects"><span>RELATED WORK</span>{item.projects.map((slug) => { const project = findProject(slug); return project && <Link key={slug} href={`/projects/${slug}`}>{project.title} <ArrowUpRight size={13} /></Link>; })}</div>}
+              {item.price && <span className="price-tag">FROM {item.price}</span>}
+            </article>
+          </Reveal>)}
         </div>}
 
-        {section === "projects" && !loading && (projects.length
-          ? <div className="project-grid">{projects.map((project, index) => <Reveal key={project.id} delay={index * 70}><ProjectCard project={project} tone={index % 2 ? "soft" : "navy"} /></Reveal>)}</div>
-          : <NextSteps message="Projects will be added here soon. In the meantime, tell me about your project or book a time to talk." />)}
-
         {section === "certificates" && !loading && (certificates.length
-          ? <div className="certificate-grid">{certificates.map((cert) => <article className="certificate-card" key={cert.id}><Award size={20} className="accent-icon" /><strong>{cert.title}</strong><span>{cert.issuer}{cert.issueYear ? ` · ${cert.issueYear}` : ""}</span>{cert.description && <p>{cert.description}</p>}{cert.verifyUrl && <a href={cert.verifyUrl} target="_blank" rel="noreferrer">VERIFY <ExternalLink size={12} /></a>}</article>)}</div>
+          ? <div className="cert-grid">{certificates.map((cert, index) => <CertificateCard key={cert.id} cert={cert} dark={index % 2 === 0} />)}</div>
           : <NextSteps message="Certificates will be listed here soon." />)}
 
         {section === "contact" && <div className="contact-block">

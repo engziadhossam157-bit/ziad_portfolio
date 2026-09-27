@@ -8,3 +8,18 @@ export const NOT_ADMIN_ERR_MSG = 'You do not have required permission (10002)';
 // it. The `__Host-` prefix forces the cookie host-only (Secure, Path=/, no
 // Domain).
 export const OAUTH_STATE_COOKIE = "__Host-oauth_state";
+
+/**
+ * A post-login redirect target from `?next=`, or null. Resolving against a throwaway origin rejects
+ * anything a browser would send off-site ("//x.com", "/\x.com", "/\t/x.com", absolute URLs).
+ */
+export function safeNextPath(next: string | null | undefined): string | null {
+  if (!next || !next.startsWith("/")) return null;
+  const base = "https://site.invalid";
+  try {
+    const url = new URL(next, base);
+    return url.origin === base ? url.pathname + url.search + url.hash : null;
+  } catch {
+    return null;
+  }
+}

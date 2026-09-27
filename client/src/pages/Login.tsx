@@ -3,6 +3,7 @@ import { ArrowLeft, ArrowUpRight, Boxes, CalendarCheck, Loader2, LockKeyhole, Me
 import { Link } from "wouter";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { startGoogleLogin } from "@/const";
+import { safeNextPath } from "@shared/const";
 import { trpc } from "@/lib/trpc";
 import { useGSAP } from "@gsap/react";
 import { gsap } from "@/lib/gsap";
@@ -22,6 +23,8 @@ export default function Login() {
   const login = trpc.auth.login.useMutation({ onSuccess: () => refresh() });
   const register = trpc.auth.register.useMutation({ onSuccess: () => refresh() });
   const pending = login.isPending || register.isPending;
+  // Where to go after sign-in: the page that sent the visitor here, otherwise the workspace for the account's role.
+  const safeNext = safeNextPath(new URLSearchParams(window.location.search).get("next"));
   const error = login.error ?? register.error;
 
   const panelRef = useRef<HTMLDivElement>(null);
@@ -72,7 +75,7 @@ export default function Login() {
             <>
               <h1>Welcome back.</h1>
               <p>You’re already signed in. Continue to your workspace.</p>
-              <Link href={user.role === "admin" ? "/admin" : "/portal"} className="button button-accent">
+              <Link href={safeNext ?? (user.role === "admin" ? "/admin" : "/portal")} className="button button-accent">
                 ENTER WORKSPACE <ArrowUpRight size={17} />
               </Link>
             </>

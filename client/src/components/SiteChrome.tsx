@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useLocation } from "wouter";
 import { ArrowUp, ArrowUpRight, Menu, X } from "lucide-react";
 import { trpc } from "@/lib/trpc";
-import { useAuth } from "@/_core/hooks/useAuth";
+import { useAuth, portalLink } from "@/_core/hooks/useAuth";
 import { useMagnetic } from "@/hooks/useMagnetic";
 import { LOCATION } from "@/lib/site";
 
@@ -11,13 +11,10 @@ export function SiteHeader() {
   const [location] = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
   const { user } = useAuth();
-  const portfolio = trpc.portfolio.public.useQuery();
   const ctaRef = useMagnetic<HTMLAnchorElement>(.35);
 
   const onHome = location === "/";
-  const portalHref = user ? (user.role === "admin" ? "/admin" : "/portal") : "/login";
-  const portalLabel = user?.role === "admin" ? "ADMIN DASHBOARD" : "CLIENT PORTAL";
-  const hasWork = (portfolio.data?.projects.length ?? 0) > 0;
+  const portal = portalLink(user);
 
   useEffect(() => { setMenuOpen(false); }, [location]);
   useEffect(() => {
@@ -36,10 +33,10 @@ export function SiteHeader() {
       <Link href="/" className="wordmark" aria-label="Ziad Hossam, home">ZIAD<span>.</span></Link>
       <nav id="site-nav" className={`public-nav ${menuOpen ? "open" : ""}`} aria-label="Main">
         <Link href="/about" onClick={close} aria-current={location === "/about" ? "page" : undefined}>ABOUT</Link>
+        <Link href="/projects" onClick={close} aria-current={location.startsWith("/projects") ? "page" : undefined}>PROJECTS</Link>
         <a href={section("services")} onClick={close}>SERVICES</a>
-        {hasWork && <a href={section("work")} onClick={close}>WORK</a>}
         <a href={section("contact")} onClick={close}>CONTACT</a>
-        <Link href={portalHref} className="nav-portal" onClick={close}>{portalLabel} <ArrowUpRight size={15} /></Link>
+        <Link href={portal.href} className="nav-portal" onClick={close}>{portal.label} <ArrowUpRight size={15} /></Link>
         <Link href="/book-a-meeting" className="nav-mobile-cta" onClick={close}>BOOK A MEETING <ArrowUpRight size={15} /></Link>
       </nav>
       <div className="header-actions">

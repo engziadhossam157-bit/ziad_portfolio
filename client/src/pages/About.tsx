@@ -1,12 +1,14 @@
 import { Link } from "wouter";
-import { ArrowUpRight, Award, ClipboardList, Compass, ExternalLink, FlaskConical, Hammer, Quote, Rocket } from "lucide-react";
+import { ArrowUpRight, ClipboardList, Compass, FlaskConical, Hammer, Quote, Rocket } from "lucide-react";
 import { trpc } from "@/lib/trpc";
 import { Reveal, Tilt3D } from "@/components/Motion";
 import { useMagnetic } from "@/hooks/useMagnetic";
 import { SiteFooter, SiteHeader } from "@/components/SiteChrome";
-import { ProjectCard } from "@/components/ProjectCard";
+import { ProjectCard, toCardData } from "@/components/ProjectCard";
+import { CertificateCard } from "@/components/CertificateCard";
 import { profileImageProps } from "@/lib/profileImage";
 import { CAPABILITIES, CONTACT_EMAIL, LOCATION, parseSocialLinks } from "@/lib/site";
+import { PROJECTS } from "@shared/portfolio";
 
 const PROCESS = [
   { icon: Compass, title: "Understand", desc: "Get to the real problem before touching a solution." },
@@ -20,7 +22,6 @@ export default function About() {
   const about = trpc.portfolio.about.useQuery();
   const experience = trpc.portfolio.experience.useQuery();
   const portfolio = trpc.portfolio.public.useQuery();
-  const allProjects = trpc.portfolio.allProjects.useQuery();
 
   const heroCtaRef = useMagnetic<HTMLAnchorElement>(.3);
   const finalCtaRef = useMagnetic<HTMLAnchorElement>(.3);
@@ -29,7 +30,7 @@ export default function About() {
   const bio = about.data?.bio || "I'm Ziad Hossam, a full-stack developer studying AI engineering and building websites, web applications, and AI-driven tools.";
   const journey = experience.data ?? [];
   const certificates = portfolio.data?.certificates ?? [];
-  const projects = allProjects.data ?? [];
+  const featuredProjects = PROJECTS.filter((project) => project.featured);
   const contactEmail = about.data?.email || CONTACT_EMAIL;
   const socials = parseSocialLinks(about.data?.socialLinks);
   const [flagship, ...capabilities] = CAPABILITIES;
@@ -125,26 +126,15 @@ export default function About() {
       {certificates.length > 0 && <section className="about-certificates section-grid" id="certificates">
         <Reveal><p className="section-kicker">CERTIFICATES &amp; TRAINING</p></Reveal>
         <Reveal delay={80}><h2 className="about-section-title">PROOF<br /><span>OF WORK.</span></h2></Reveal>
-        <div className="certificate-grid">
-          {certificates.map((cert, index) => (
-            <Reveal key={cert.id} delay={index * 70}>
-              <Tilt3D className="certificate-card" intensity={8}>
-                <Award size={20} className="accent-icon" />
-                <strong>{cert.title}</strong>
-                <span>{cert.issuer}{cert.issueYear ? ` · ${cert.issueYear}` : ""}</span>
-                {cert.description && <p>{cert.description}</p>}
-                {cert.verifyUrl && <a href={cert.verifyUrl} target="_blank" rel="noreferrer">VERIFY <ExternalLink size={12} /></a>}
-              </Tilt3D>
-            </Reveal>
-          ))}
-        </div>
+        <div className="cert-grid">{certificates.map((cert, index) => <Reveal key={cert.id} delay={index * 90}><CertificateCard cert={cert} dark={index % 2 === 0} /></Reveal>)}</div>
       </section>}
 
-      {projects.length > 0 && <section className="work-section section-grid" id="selected-work">
+      <section className="work-section section-grid" id="selected-work">
         <Reveal><p className="section-kicker">SELECTED WORK</p></Reveal>
         <Reveal delay={80}><h2 className="about-section-title">MADE TO BE<br /><span>REMEMBERED.</span></h2></Reveal>
-        <div className="project-grid">{projects.map((project, index) => <Reveal key={project.id} delay={index * 70}><ProjectCard project={project} tone={index % 2 ? "soft" : "navy"} /></Reveal>)}</div>
-      </section>}
+        <div className="project-grid">{featuredProjects.map((project, index) => <Reveal key={project.slug} delay={index * 70}><ProjectCard project={toCardData(project)} tone={index % 2 ? "soft" : "navy"} /></Reveal>)}</div>
+        <Reveal className="work-more"><Link href="/projects" className="button button-outline">VIEW ALL {PROJECTS.length} PROJECTS <ArrowUpRight size={18} /></Link></Reveal>
+      </section>
 
       <section className="philosophy-section section-grid">
         <Reveal>

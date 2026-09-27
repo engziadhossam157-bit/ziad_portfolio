@@ -1,6 +1,7 @@
 import type { Request } from "express";
+import { PROJECTS } from "@shared/portfolio";
 
-type RouteMeta = { title: string; description: string; noindex?: boolean };
+type RouteMeta = { title: string; description: string; noindex?: boolean; image?: string };
 
 const PAGE_META: Record<string, RouteMeta> = {
   "/": {
@@ -13,12 +14,17 @@ const PAGE_META: Record<string, RouteMeta> = {
   },
   "/services": {
     title: "Services | Ziad Hossam",
-    description: "Full-stack web development, backend and API work, automation, and AI engineering by Ziad Hossam.",
+    description: "Custom full-stack web applications, WooCommerce stores, WordPress business websites, and Electron desktop apps by Ziad Hossam.",
   },
   "/projects": {
-    title: "Selected Work | Ziad Hossam",
-    description: "Websites, web applications, and software projects built by Ziad Hossam.",
+    title: "Projects | Ziad Hossam",
+    description: "Web applications, an ERP system, e-commerce stores, business websites, and a desktop app built by Ziad Hossam.",
   },
+  ...Object.fromEntries(PROJECTS.map((project) => [`/projects/${project.slug}`, {
+    title: `${project.title} | Ziad Hossam`,
+    description: project.summary,
+    image: project.ogImage,
+  }])),
   "/certificates": {
     title: "Certificates | Ziad Hossam",
     description: "Certificates and training completed by Ziad Hossam.",
@@ -79,7 +85,7 @@ export function applySeoMeta(html: string, req: Request): string {
   const description = escapeHtml(meta.description);
   const origin = getRequestOrigin(req);
   const url = `${origin}${pathname === "/" ? "" : pathname}`;
-  const image = `${origin}/images/og-image.jpg`;
+  const image = `${origin}${meta.image ?? "/images/og-image.jpg"}`;
   const robots = meta.noindex ? "noindex, nofollow" : "index, follow";
 
   return html

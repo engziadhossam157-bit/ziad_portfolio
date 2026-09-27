@@ -1,21 +1,23 @@
-import { useMemo, useRef, useState } from "react";
+import { useRef } from "react";
 import { Link } from "wouter";
-import { ArrowUpRight, Asterisk, Award, ExternalLink, MoveRight, Quote } from "lucide-react";
+import { ArrowUpRight, Asterisk, MoveRight, Quote } from "lucide-react";
 import { trpc } from "@/lib/trpc";
 import { useGSAP } from "@gsap/react";
 import { gsap, ScrollTrigger } from "@/lib/gsap";
 import { useMagnetic } from "@/hooks/useMagnetic";
-import { useAuth } from "@/_core/hooks/useAuth";
+import { portalLink, useAuth } from "@/_core/hooks/useAuth";
 import { Reveal, Tilt3D } from "@/components/Motion";
 import { SiteFooter, SiteHeader, useHashScroll } from "@/components/SiteChrome";
-import { ProjectCard } from "@/components/ProjectCard";
+import { ProjectCard, toCardData } from "@/components/ProjectCard";
+import { CertificateCard } from "@/components/CertificateCard";
 import { profileImageProps } from "@/lib/profileImage";
-import { CAPABILITIES, CONTACT_EMAIL, MARQUEE_ITEMS, parseSocialLinks, resolveServiceIcon } from "@/lib/site";
+import { CONTACT_EMAIL, MARQUEE_ITEMS, parseSocialLinks, resolveServiceIcon } from "@/lib/site";
+import { PROJECTS, SERVICES, findProject } from "@shared/portfolio";
 
 const METRICS = [
-  { value: "40+", label: "Projects shipped" },
+  { value: "25", label: "Projects shipped" },
   { value: "96%", label: "Client satisfaction" },
-  { value: "06", label: "Years building" },
+  { value: "2", label: "Years building" },
 ];
 
 function Metric({ value, label }: { value: string; label: string }) {
@@ -44,27 +46,24 @@ function Metric({ value, label }: { value: string; label: string }) {
 }
 
 export default function Home() {
-  const [activeFilter, setActiveFilter] = useState("ALL");
   const portfolio = trpc.portfolio.public.useQuery();
   const about = trpc.portfolio.about.useQuery();
   const { user } = useAuth();
 
   const services = portfolio.data?.services ?? [];
-  const projects = portfolio.data?.projects ?? [];
   const certificates = portfolio.data?.certificates ?? [];
   const featuredTestimonial = portfolio.data?.testimonials[0];
 
-  // Published services win; until any exist, the capability list keeps the section populated.
+  // Services published from the admin workspace win; otherwise the list in shared/portfolio.ts,
+  // where each service links to the projects that back it up.
   const serviceItems = portfolio.isPending ? [] : services.length
-    ? services.map((service) => ({ key: `service-${service.id}`, title: service.title, desc: service.shortDescription || service.description, Icon: resolveServiceIcon(service.icon) }))
-    : CAPABILITIES.map((cap) => ({ key: cap.title, title: cap.title, desc: cap.desc, Icon: cap.icon }));
-
-  const filters = useMemo(() => ["ALL", ...Array.from(new Set(projects.map((project) => project.category)))], [projects]);
-  const visibleProjects = activeFilter === "ALL" ? projects : projects.filter((project) => project.category === activeFilter);
+    ? services.map((service) => ({ key: `service-${service.id}`, title: service.title, desc: service.shortDescription || service.description, Icon: resolveServiceIcon(service.icon), projects: [] as string[] }))
+    : SERVICES.map((service) => ({ key: service.slug, title: service.title, desc: service.summary, Icon: resolveServiceIcon(service.icon), projects: service.projects }));
+  const featuredProjects = PROJECTS.filter((project) => project.featured);
   const contactEmail = about.data?.email || CONTACT_EMAIL;
   const socials = parseSocialLinks(about.data?.socialLinks);
   const bioText = about.data?.bio || `I'm ${about.data?.name || "Ziad Hossam"}, a full-stack developer building websites, web applications, and AI-driven tools.`;
-  const portalHref = user ? (user.role === "admin" ? "/admin" : "/portal") : "/login";
+  const portal = portalLink(user);
 
   useHashScroll(portfolio.isSuccess);
 
@@ -146,14 +145,14 @@ export default function Home() {
           <p className="hero-intro" ref={heroIntroRef}><span className="sr-only">{bioText}</span><span aria-hidden="true"><span ref={typeTextRef}>{bioText}</span><span className="type-cursor" ref={typeCursorRef}>|</span></span></p>
           <div className="hero-actions" ref={heroActionsRef}>
             <Link href="/start-project" className="button button-accent" ref={heroCtaRef}>START A PROJECT <MoveRight size={18} /></Link>
-            <Link href={portalHref} className="button button-outline" ref={portalCtaRef}>CLIENT PORTAL <ArrowUpRight size={18} /></Link>
+            <Link href={portal.href} className="button button-outline" ref={portalCtaRef}>{portal.label} <ArrowUpRight size={18} /></Link>
           </div>
         </div>
         <div className="hero-photo-stage" ref={photoStageRef}>
           <div className="photo-panel" ref={photoPanelRef} />
           <Tilt3D className="photo-tilt" intensity={6}>
-            <div className="photo-frame-mask" ref={photoFrameRef}>
-              <img {...profileImageProps(about.data?.profileImageUrl)} alt={about.data?.name || "Ziad Hossam"} fetchPriority="high" />
+            <div className={`photo-frame-mask${about.data?.profileImageUrl ? "" : " is-cutout"}`} ref={photoFrameRef}>
+              <img {...profileImageProps(about.data?.profileImageUrl, "home")} alt={about.data?.name || "Ziad Hossam"} fetchPriority="high" />
             </div>
           </Tilt3D>
         </div>
@@ -179,32 +178,33 @@ export default function Home() {
       <section className="services-section" id="services">
         <Reveal><h2 className="section-title">THE RIGHT<br /><span>TOOLS FOR</span><br />YOUR NEXT MOVE.</h2></Reveal>
         <div className="services-list">
-          {serviceItems.map(({ key, title, desc, Icon }, index) => (
+          {serviceItems.map(({ key, title, desc, Icon, projects }, index) => (
             <Reveal key={key} delay={index * 70}>
               <div className="service-row">
                 <span className="service-icon-chip"><Icon size={26} strokeWidth={1.4} /></span>
                 <h3>{title}</h3>
-                <p>{desc}</p>
+                <div className="service-detail">
+                  <p>{desc}</p>
+                  {projects.length > 0 && <div className="service-projects"><span>RELATED WORK</span>{projects.map((slug) => { const project = findProject(slug); return project && <Link key={slug} href={`/projects/${slug}`}>{project.title} <ArrowUpRight size={13} /></Link>; })}</div>}
+                </div>
               </div>
             </Reveal>
           ))}
         </div>
       </section>
 
-      {projects.length > 0 && <section className="work-section" id="work">
+      <section className="work-section" id="work">
         <div className="work-heading">
           <Reveal><p className="section-kicker">SELECTED WORK</p></Reveal>
           <Reveal delay={80}><h2 className="section-title">MADE TO BE<br /><span>REMEMBERED.</span></h2></Reveal>
-          {filters.length > 2 && <div className="filter-row" role="group" aria-label="Filter projects by category">{filters.map((filter) => <button key={filter} type="button" className={activeFilter === filter ? "active" : ""} aria-pressed={activeFilter === filter} onClick={() => setActiveFilter(filter)}>{filter}</button>)}</div>}
         </div>
-        <div className="project-grid">{visibleProjects.map((project, index) => <Reveal key={project.id} delay={index * 70}><ProjectCard project={project} tone={index % 2 ? "soft" : "navy"} /></Reveal>)}</div>
-      </section>}
+        <div className="project-grid">{featuredProjects.map((project, index) => <Reveal key={project.slug} delay={index * 70}><ProjectCard project={toCardData(project)} tone={index % 2 ? "soft" : "navy"} /></Reveal>)}</div>
+        <Reveal className="work-more"><Link href="/projects" className="button button-outline">VIEW ALL {PROJECTS.length} PROJECTS <ArrowUpRight size={18} /></Link></Reveal>
+      </section>
 
       {certificates.length > 0 && <section className="certificates-section section-grid" id="certificates">
-        <Reveal className="certificate-strip">
-          <div><p className="section-kicker">CERTIFICATES</p><h2>PROOF<br /><span>OF WORK.</span></h2></div>
-          <div className="certificate-grid">{certificates.map((cert) => <Tilt3D className="certificate-card" intensity={8} key={cert.id}><Award size={20} className="accent-icon" /><strong>{cert.title}</strong><span>{cert.issuer}{cert.issueYear ? ` · ${cert.issueYear}` : ""}</span>{cert.description && <p>{cert.description}</p>}{cert.verifyUrl && <a href={cert.verifyUrl} target="_blank" rel="noreferrer">VERIFY <ExternalLink size={12} /></a>}</Tilt3D>)}</div>
-        </Reveal>
+        <Reveal><p className="section-kicker">CERTIFICATES</p><h2 className="section-title">PROOF<br /><span>OF WORK.</span></h2></Reveal>
+        <div className="cert-grid">{certificates.map((cert, index) => <Reveal key={cert.id} delay={index * 90}><CertificateCard cert={cert} dark={index % 2 === 0} /></Reveal>)}</div>
       </section>}
 
       {featuredTestimonial && <section className="testimonial-section">
