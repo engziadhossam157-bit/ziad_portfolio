@@ -1,0 +1,45 @@
+# Render Blueprint: New > Blueprint > pick this repo, and Render creates the web service
+# from this file. Values marked `sync: false` are asked for once during setup and are
+# never stored in the repo.
+services:
+  - type: web
+    name: ziad-portfolio
+    runtime: node
+    plan: free
+    region: frankfurt
+    # vite and esbuild are devDependencies, so the install step must include them even if
+    # NODE_ENV=production is set on the service. `pnpm start` sets NODE_ENV for runtime.
+    buildCommand: NODE_ENV=development pnpm install --frozen-lockfile && pnpm build
+    startCommand: pnpm start
+    healthCheckPath: /
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      - key: JWT_SECRET
+        generateValue: true
+      - key: TURSO_DATABASE_URL
+        sync: false
+      - key: TURSO_AUTH_TOKEN
+        sync: false
+      - key: APP_URL
+        sync: false
+      - key: OWNER_EMAIL
+        value: eng.ziadhossam157@gmail.com
+      - key: NOTIFY_OWNER_EMAIL
+        value: eng.ziadhossam157@gmail.com
+      - key: NOTIFY_FROM_EMAIL
+        sync: false
+      - key: RESEND_API_KEY
+        sync: false
+      - key: GOOGLE_CLIENT_ID
+        sync: false
+      - key: GOOGLE_CLIENT_SECRET
+        sync: false
+      - key: AWS_REGION
+        sync: false
+      - key: AWS_S3_BUCKET
+        sync: false
+      - key: AWS_ACCESS_KEY_ID
+        sync: false
+      - key: AWS_SECRET_ACCESS_KEY
+        sync: false

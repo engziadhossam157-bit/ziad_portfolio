@@ -79,15 +79,23 @@ New project requests and client messages can email you. Uses
 Leave these blank to skip — the app just logs a warning instead of sending.
 ## 7. Deploy to Render
 
-1. Push this repo to GitHub.
-2. In Render, create a new **Web Service** from the repo.
-3. Build command: `pnpm install && pnpm build`
-4. Start command: `pnpm start`
-5. Add every environment variable from `.env.example` in the Render
-   dashboard's Environment tab (`TURSO_DATABASE_URL`, `TURSO_AUTH_TOKEN`,
-   `JWT_SECRET`, `OWNER_EMAIL`, `AWS_*`, etc).
-6. Deploy. Point your domain at the Render service and set `APP_URL` to
-   match it (needed for the Google OAuth redirect URI, if you use it).
+The repo includes a `render.yaml` Blueprint, so the quickest path is:
+
+1. In Render, choose **New > Blueprint** and pick this GitHub repo.
+2. Fill in the values Render asks for (`TURSO_DATABASE_URL`, `TURSO_AUTH_TOKEN`,
+   `APP_URL`, and any optional Google, AWS, or Resend keys). `JWT_SECRET` is
+   generated for you.
+3. Deploy. Every push to `main` redeploys automatically.
+
+To set up a plain **Web Service** by hand instead:
+
+1. Build command: `NODE_ENV=development pnpm install --frozen-lockfile && pnpm build`
+2. Start command: `pnpm start`
+3. Add the variables from `.env.example` in the Environment tab, **except
+   `NODE_ENV`**: the start script already sets it, and setting it to
+   `production` makes pnpm skip the dev dependencies the build needs.
+4. Point your domain at the service and set `APP_URL` to match it (needed
+   for the Google OAuth redirect URI, if you use it).
 
 Render's free tier spins the service down after inactivity, causing a slow
 first request (~30s cold start). A paid instance (~$7/mo) keeps it always on.
@@ -95,11 +103,10 @@ Railway or Fly.io work the same way if you'd rather use one of those instead.
 
 ## What still needs your attention after deploy
 
-- **Profile photo**: `client/src/pages/Home.tsx` currently points at a
-  placeholder SVG (`/images/profile-placeholder.svg`) since your real photo
-  lived in Manus's storage and wasn't included in this export. Drop a real
-  photo in `client/public/images/` and update the `PROFILE_IMAGE` constant,
-  or build an admin upload flow that writes to S3 and use the returned URL.
+- **Profile photo**: the site uses `client/public/images/profile-ziad-portrait*`
+  (a portrait crop of `profile-ziad-about.jpg`, served as WebP). To use a
+  different photo, set **Profile image URL** in Admin > About, or replace
+  those files and keep the same names (see `client/src/lib/profileImage.ts`).
 - **AI project-brief assistant, image generation, voice transcription**:
   removed for this launch, as requested. The manual project-request form
   still works fully. These can be added back later against a real
