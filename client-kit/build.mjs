@@ -102,6 +102,8 @@ th:last-child, td:last-child { padding-right: 0; }
 .one-page td { padding: 1.8mm 3mm 1.8mm 0; }
 .one-page .sign { margin-top: 6mm; } .one-page .sign .space { height: 12mm; }
 .big { font: 700 22pt Geist; letter-spacing: -.03em; color: var(--navy); }
+.rule { height: 0; border-top: 1px solid var(--line); margin: 5mm 0; }
+.email p { margin: 0 0 3mm; } .email h2.new-page { break-before: page; margin-top: 0; } .email code { font: 8.6pt Mono; background: var(--soft); padding: 0 1mm; border-radius: 2px; }
 `;
 
 const header = (tag, code) => `<div class="brand"><div class="brand-id">${logo}<div><b>${esc(S.name)}</b><span>${esc(S.title)}  ·  ${esc(S.city)}</span></div></div><div class="doc-tag">${tag}<br>${code}</div></div>`;
@@ -340,6 +342,27 @@ ${signatures("Confirmed by the client", "Completed by")}
 
 // ---------- render ----------
 const docs = [["01-proposal", proposal], ["02-contract", contract], ["02b-terms-and-conditions", terms], ["03-invoice", invoice], ["04-welcome", welcome], ["05-kickoff", kickoff], ["06-mid-project-report", mid], ["07-final-deliverables", deliverables], ["08-project-completion", completion]];
+
+// 9. Proposal email: rendered from 09-proposal-email.md next to the config, when there is one.
+const emailMd = path.join(path.dirname(cfgPath), "09-proposal-email.md");
+if (fs.existsSync(emailMd)) {
+  const inline = (t) => esc(t).replace(/\*\*(.+?)\*\*/g, "<b>$1</b>").replace(/`(.+?)`/g, "<code>$1</code>");
+  // Blank lines separate paragraphs; consecutive lines (like a sign-off) stay together.
+  let body = "", list = false, para = [];
+  const flush = () => { if (para.length) body += `<p>${para.map(inline).join("<br>")}</p>`; para = []; };
+  for (const line of fs.readFileSync(emailMd, "utf8").split(/\r?\n/)) {
+    if (!line.startsWith("- ") && list) { body += "</ul>"; list = false; }
+    if (line.startsWith("# ")) continue; // the page header already names the document
+    else if (line.startsWith("## ")) { flush(); body += `<h2 class="new-page">${inline(line.slice(3))}</h2>`; }
+    else if (line.trim() === "---") { flush(); body += '<div class="rule"></div>'; }
+    else if (line.startsWith("- ")) { flush(); if (!list) { body += "<ul>"; list = true; } body += `<li>${inline(line.slice(2))}</li>`; }
+    else if (line.trim()) para.push(line);
+    else flush();
+  }
+  flush();
+  if (list) body += "</ul>";
+  docs.push(["09-proposal-email", doc("Proposal email", `${header("Proposal email", projectName)}<h1>Proposal email</h1><div class="email">${body}</div>`)]);
+}
 const chrome = process.env.CHROME_PATH || ["C:/Program Files/Google/Chrome/Application/chrome.exe", "C:/Program Files (x86)/Google/Chrome/Application/chrome.exe", "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome", "/usr/bin/google-chrome"].find((p) => fs.existsSync(p));
 if (!chrome) throw new Error("Chrome not found. Set CHROME_PATH to a Chrome or Chromium executable.");
 for (const [name, html] of docs) {
