@@ -152,14 +152,16 @@ export default function Home() {
           <div className="photo-panel" ref={photoPanelRef} />
           <Tilt3D className="photo-tilt" intensity={6}>
             <div className={`photo-frame-mask${about.data?.profileImageUrl ? "" : " is-cutout"}`} ref={photoFrameRef}>
-              {!about.data?.profileImageUrl && <div className="photo-aurora" aria-hidden="true" />}
+              {!about.data?.profileImageUrl && <svg className="photo-blobs" viewBox="0 0 100 122" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+                <path className="blob-blue" d="M41.5 92C39.9 97.1 28.2 105 20.4 107.3C12.6 109.7 0.6 109.3 -5.3 106.3C-11.2 103.3 -17 95.1 -15.2 89.4C-13.4 83.8 -1.9 74.6 5.7 72.4C13.2 70.3 23.9 73.4 29.9 76.7C35.9 79.9 43.1 86.9 41.5 92Z" />
+                <path className="blob-main" d="M82.3 44C81.2 51.7 72.5 62.2 64.4 66.8C56.4 71.4 41.7 73.9 34 71.5C26.4 69.1 20 60.1 18.6 52.6C17.1 45.1 21 34 25.4 26.6C29.7 19.3 37.2 9.6 44.7 8.6C52.3 7.5 64.5 14.5 70.8 20.4C77 26.3 83.4 36.3 82.3 44Z" />
+                <path className="blob-outline" d="M91.7 41C90.6 49.2 72.2 65.2 63.7 70.1C55.3 75 48.8 73.4 41.2 70.5C33.6 67.6 19.7 60.5 18.1 52.6C16.5 44.7 26.4 29.5 31.4 23C36.4 16.6 41.6 14.4 48 14C54.5 13.6 63 16.3 70.3 20.8C77.5 25.3 92.8 32.8 91.7 41Z" />
+                <path className="blob-small" d="M96.7 16C95.9 18.1 91.9 22.1 89.8 22.9C87.6 23.6 85.3 21.7 83.8 20.5C82.2 19.3 80.3 17.5 80.5 15.4C80.7 13.3 82.4 8.7 84.7 7.9C87 7 92.3 9 94.3 10.4C96.3 11.8 97.5 13.9 96.7 16Z" />
+                <g className="blob-dots"><circle cx="86" cy="58" r="1.6" /><circle cx="90.5" cy="52" r="1" /><circle cx="15" cy="20" r="1.3" /><circle cx="10.5" cy="25" r=".8" /><circle cx="30" cy="80" r="1" /></g>
+              </svg>}
               <img {...profileImageProps(about.data?.profileImageUrl, "home")} alt={about.data?.name || "Ziad Hossam"} fetchPriority="high" />
             </div>
           </Tilt3D>
-          <div className="hero-credential">
-            <img src="/images/depi-logo.webp" alt="" width="174" height="160" />
-            <div><strong>DEPI Round 5 · Data Science</strong><span>Digital Egypt Pioneers, 9 months</span></div>
-          </div>
         </div>
       </section>
 
@@ -177,7 +179,13 @@ export default function Home() {
             <Link href="/about" className="about-cta" ref={aboutCtaRef}>MORE ABOUT ME <ArrowUpRight size={17} /></Link>
           </div>
         </Reveal>
-        <Reveal delay={140} className="metrics">{METRICS.map((metric) => <Metric key={metric.label} {...metric} />)}</Reveal>
+        <div className="intro-side">
+          <Reveal delay={140} className="metrics">{METRICS.map((metric) => <Metric key={metric.label} {...metric} />)}</Reveal>
+          <Reveal delay={220} className="now-learning">
+            <img src="/images/depi-logo.webp" alt="Digital Egypt Pioneers Initiative (DEPI) logo" width="174" height="160" />
+            <div><span>NOW LEARNING</span><strong>Data Science, DEPI Round 5</strong><p>A 9-month track with Digital Egypt Pioneers.</p></div>
+          </Reveal>
+        </div>
       </section>
 
       <section className="services-section" id="services">

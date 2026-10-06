@@ -598,23 +598,24 @@ h1,h2,h3,p { margin-top: 0; } h1 { font-size: clamp(4.8rem,10vw,10.4rem); line-h
 /* Home portrait: a transparent cutout standing in a navy card; the offset frame is an outline so it still reads against the navy. */
 .photo-panel { background: transparent; border: 1.5px solid var(--navy); }
 .photo-frame-mask.is-cutout { background: radial-gradient(90% 70% at 50% 28%, #1B3D6E 0%, var(--navy) 58%, var(--navy-deep) 100%); }
-/* Aurora behind the cutout: a warm rim light behind the head and a cool glow below it, drifting slowly,
-   over a faint dot grid that fades out toward the edges. Brand navy/sand only. */
-.photo-aurora { position: absolute; inset: -20%; z-index: 0; background:
-    radial-gradient(38% 30% at 52% 34%, color-mix(in srgb, var(--surface-alt) 55%, transparent), transparent 70%),
-    radial-gradient(45% 38% at 24% 78%, color-mix(in srgb, var(--accent-soft) 80%, transparent), transparent 72%),
-    radial-gradient(40% 34% at 84% 62%, color-mix(in srgb, #4C7CC4 45%, transparent), transparent 70%);
-  filter: blur(18px); animation: aurora-drift 12s ease-in-out infinite alternate; }
-.photo-frame-mask.is-cutout::before { content: ''; position: absolute; inset: 0; z-index: 0; pointer-events: none;
-  background-image: radial-gradient(color-mix(in srgb, var(--surface) 22%, transparent) 1px, transparent 1.2px); background-size: 18px 18px;
-  -webkit-mask-image: radial-gradient(70% 60% at 50% 40%, #000, transparent 85%); mask-image: radial-gradient(70% 60% at 50% 40%, #000, transparent 85%); }
-@keyframes aurora-drift { 0% { transform: translate3d(0,0,0) scale(1); } 100% { transform: translate3d(3%,-4%,0) scale(1.08); } }
-/* DEPI credential: a light card overlapping the portrait's bottom-left corner. */
-.hero-credential { position: absolute; z-index: 2; left: -34px; bottom: 34px; display: flex; align-items: center; gap: .8rem; max-width: 340px; padding: .7rem 1rem .7rem .75rem; border: 1px solid var(--line); border-radius: var(--radius-card); background: var(--surface); box-shadow: 0 1px 2px rgba(0,31,73,.08), 0 18px 36px -16px rgba(0,31,73,.4); }
-.hero-credential img { flex: 0 0 auto; width: 44px; height: auto; }
-.hero-credential strong { display: block; color: var(--navy); font-size: .9rem; line-height: 1.25; letter-spacing: -.01em; }
-.hero-credential span { display: block; margin-top: .15rem; white-space: nowrap; color: var(--muted); font: .66rem/1.4 'DM Mono',monospace; letter-spacing: .02em; }
-@media (max-width: 850px) { .hero-credential { left: 50%; bottom: -26px; transform: translateX(-50%); width: max-content; max-width: calc(100% - 1rem); } }
+/* Organic blobs behind the cutout: a flat sand blob, an offset outline blob, a blue blob and splatter dots.
+   Paths come from a seeded blob generator (smooth Catmull-Rom curves); each layer floats slowly. */
+.photo-blobs { position: absolute; inset: 0; z-index: 0; width: 100%; height: 100%; overflow: visible; }
+.photo-blobs path, .photo-blobs g { transform-box: fill-box; transform-origin: center; animation: blob-float 9s ease-in-out infinite alternate; }
+.blob-main { fill: var(--surface-alt); }
+.blob-outline { fill: none; stroke: var(--surface); stroke-opacity: .7; stroke-width: .45; animation-duration: 11s !important; animation-direction: alternate-reverse !important; }
+.blob-blue { fill: var(--accent-soft); animation-duration: 13s !important; }
+.blob-small { fill: var(--surface-alt); opacity: .85; animation-duration: 7s !important; }
+.blob-dots { fill: var(--surface-alt); animation-duration: 10s !important; }
+@keyframes blob-float { from { transform: translate(0,0) rotate(0deg); } to { transform: translate(1.5px,-2px) rotate(4deg); } }
+/* DEPI "now learning" card under the intro metrics. */
+.intro-side { display: grid; gap: 1.6rem; }
+.now-learning { display: flex; align-items: center; gap: 1rem; padding: 1.1rem 1.3rem; border: 1px solid var(--line); border-radius: var(--radius-card); background: var(--surface); box-shadow: 0 1px 2px rgba(0,31,73,.05), 0 18px 40px -26px rgba(0,31,73,.35); }
+.now-learning img { flex: 0 0 auto; width: 58px; height: auto; }
+.now-learning span { display: block; color: var(--muted-soft); font: .66rem 'DM Mono',monospace; letter-spacing: .08em; }
+.now-learning strong { display: block; margin-top: .3rem; color: var(--navy); font-size: 1.05rem; line-height: 1.25; letter-spacing: -.02em; }
+.now-learning p { margin: .25rem 0 0; color: var(--muted); font-size: .88rem; line-height: 1.5; }
+@media (max-width: 850px) { .intro-side { margin-top: 3rem; } }
 .photo-frame-mask.is-cutout img { z-index: 1; }
 .photo-frame-mask.is-cutout img { position: absolute; left: 50%; bottom: 0; width: 112%; height: auto; max-width: none; transform: translateX(-50%); object-fit: contain; }
 
