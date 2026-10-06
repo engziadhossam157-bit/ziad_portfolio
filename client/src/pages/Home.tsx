@@ -1,6 +1,6 @@
 import { useRef } from "react";
 import { Link } from "wouter";
-import { ArrowUpRight, Asterisk, MoveRight, Quote } from "lucide-react";
+import { ArrowUpRight, Asterisk, Mail, MoveRight, Quote } from "lucide-react";
 import { trpc } from "@/lib/trpc";
 import { useGSAP } from "@gsap/react";
 import { gsap, ScrollTrigger } from "@/lib/gsap";
@@ -235,7 +235,7 @@ export default function Home() {
         <Reveal className="cta-copy"><h2>HAVE A GOOD<br /><span>PROBLEM?</span></h2><Link href="/start-project" className="button button-accent" ref={finalCtaRef}>START A PROJECT <ArrowUpRight size={18} /></Link></Reveal>
         <Reveal delay={120} className="cta-aside">
           <p>For new projects, collaborations, or just a hello.</p>
-          <a className="cta-email" href={`mailto:${contactEmail}`}>{contactEmail}</a>
+          <a className="cta-email" href={`mailto:${contactEmail}`}><Mail size={16} aria-hidden="true" /> {contactEmail}</a>
           <ContactDetails />
           <div className="social-links"><Link href="/book-a-meeting">BOOK A MEETING</Link>{socials.map((social) => <a key={social.href} href={social.href} target="_blank" rel="noreferrer">{social.label}</a>)}</div>
         </Reveal>

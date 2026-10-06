@@ -1,5 +1,5 @@
 import { Link } from "wouter";
-import { ArrowUpRight, ClipboardList, Compass, FlaskConical, Hammer, Quote, Rocket } from "lucide-react";
+import { ArrowUpRight, ClipboardList, Compass, FlaskConical, Hammer, Mail, Quote, Rocket } from "lucide-react";
 import { trpc } from "@/lib/trpc";
 import { Reveal, Tilt3D } from "@/components/Motion";
 import { useMagnetic } from "@/hooks/useMagnetic";
@@ -158,7 +158,7 @@ export default function About() {
         <Reveal className="cta-copy"><h2>HAVE AN IDEA?<br /><span>LET'S BUILD IT.</span></h2><Link href="/start-project" className="button button-accent" ref={finalCtaRef}>START A PROJECT <ArrowUpRight size={18} /></Link></Reveal>
         <Reveal delay={120} className="cta-aside">
           <p>For new projects, collaborations, or just a hello.</p>
-          <a className="cta-email" href={`mailto:${contactEmail}`}>{contactEmail}</a>
+          <a className="cta-email" href={`mailto:${contactEmail}`}><Mail size={16} aria-hidden="true" /> {contactEmail}</a>
           <ContactDetails />
           <div className="social-links"><Link href="/book-a-meeting">BOOK A MEETING</Link>{socials.map((social) => <a key={social.href} href={social.href} target="_blank" rel="noreferrer">{social.label}</a>)}</div>
         </Reveal>
