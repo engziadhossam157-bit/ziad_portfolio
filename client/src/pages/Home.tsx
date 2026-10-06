@@ -13,6 +13,7 @@ import { CertificateCard } from "@/components/CertificateCard";
 import { profileImageProps } from "@/lib/profileImage";
 import { CONTACT_EMAIL, MARQUEE_ITEMS, parseSocialLinks, resolveServiceIcon } from "@/lib/site";
 import { PROJECTS, SERVICES, findProject } from "@shared/portfolio";
+import { ContactDetails } from "@/components/ContactDetails";
 
 const METRICS = [
   { value: "25", label: "Projects shipped" },
@@ -235,6 +236,7 @@ export default function Home() {
         <Reveal delay={120} className="cta-aside">
           <p>For new projects, collaborations, or just a hello.</p>
           <a className="cta-email" href={`mailto:${contactEmail}`}>{contactEmail}</a>
+          <ContactDetails />
           <div className="social-links"><Link href="/book-a-meeting">BOOK A MEETING</Link>{socials.map((social) => <a key={social.href} href={social.href} target="_blank" rel="noreferrer">{social.label}</a>)}</div>
         </Reveal>
       </section>

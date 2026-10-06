@@ -6,6 +6,7 @@ import { SiteFooter, SiteHeader } from "@/components/SiteChrome";
 import { CertificateCard } from "@/components/CertificateCard";
 import { CONTACT_EMAIL, parseSocialLinks, resolveServiceIcon } from "@/lib/site";
 import { SERVICES, findProject } from "@shared/portfolio";
+import { ContactDetails } from "@/components/ContactDetails";
 
 const TITLES: Record<string, string> = { services: "SERVICES", certificates: "CERTIFICATES", contact: "CONTACT" };
 
@@ -56,6 +57,7 @@ export default function PublicSection() {
         {section === "contact" && <div className="contact-block">
           <p className="public-lead">For new projects and collaborations, the project form is the best place to start. For anything else, send me an email.</p>
           <a className="contact-email" href={`mailto:${contactEmail}`}><Mail size={22} /> {contactEmail}</a>
+          <ContactDetails large />
           <div className="hero-actions">
             <Link href="/start-project" className="button button-accent">START A PROJECT <ArrowUpRight size={17} /></Link>
             <Link href="/book-a-meeting" className="button button-outline">BOOK A MEETING <ArrowUpRight size={17} /></Link>

@@ -4,6 +4,8 @@ import { Blocks, Brain, Code2, Figma, Globe, Layers3, Monitor, Rocket, Server, S
 export const CONTACT_EMAIL = "eng.ziadhossam157@gmail.com";
 export const GITHUB_URL = "https://github.com/engziadhossam157-bit";
 export const LOCATION = "Cairo, Egypt";
+export const CONTACT_PHONE = { display: "+20 102 082 4464", href: "tel:+201020824464" };
+export const LINKEDIN = { display: "linkedin.com/in/ziad-hossam07", href: "https://www.linkedin.com/in/ziad-hossam07" };
 
 export type Capability = { icon: LucideIcon; title: string; desc: string; flagship?: boolean };
 

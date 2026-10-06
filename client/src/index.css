@@ -177,6 +177,12 @@ h1,h2,h3,p { margin-top: 0; } h1 { font-size: clamp(4.8rem,10vw,10.4rem); line-h
 .cta-section { padding-top: 6rem; padding-bottom: 7rem; border-top: 1px solid var(--line); display: grid; grid-template-columns: minmax(0,1.5fr) minmax(260px,.8fr); gap: 3rem; align-items: end; }
 .cta-copy h2 { font-size: clamp(3.4rem,6vw,7.6rem); line-height: .82; letter-spacing: -.09em; margin: 0 0 2.6rem; } .cta-copy .button-accent { padding: 1.3rem 2rem; font-size: .8rem; font-weight: 500; letter-spacing: .05em; gap: 1rem; box-shadow: 0 22px 48px rgba(0,31,73,.28); } .cta-copy .button-accent:hover { box-shadow: 0 30px 64px rgba(0,31,73,.36); }
 .cta-aside { padding-bottom: .5rem; } .cta-aside p { color: var(--muted); line-height: 1.55; margin: 0 0 .9rem; }
+.contact-details { list-style: none; margin: 1rem 0 0; padding: 0; display: grid; gap: .55rem; }
+.contact-details a { display: inline-flex; align-items: center; gap: .55rem; color: var(--muted); font: .82rem 'DM Mono',monospace; letter-spacing: .02em; border-bottom: 1px solid transparent; padding-bottom: .15rem; transition: color .18s, border-color .18s; }
+.contact-details a:hover { color: var(--accent); border-color: var(--accent); }
+.contact-details a svg { flex: 0 0 auto; color: var(--accent); }
+.contact-details.is-large { margin: -1.2rem 0 2.2rem; gap: .8rem; }
+.contact-details.is-large a { font-size: clamp(.95rem,1.6vw,1.15rem); }
 .cta-email { display: inline-block; color: var(--accent); font: 500 .95rem 'DM Mono',monospace; border-bottom: 1px solid var(--line); padding-bottom: .3rem; overflow-wrap: anywhere; transition: border-color .18s; } .cta-email:hover { border-color: var(--accent); }
 .social-links { display: flex; flex-wrap: wrap; gap: .4rem 1.4rem; margin-top: 2rem; color: var(--muted); font: .72rem 'DM Mono',monospace; letter-spacing: .04em; } .social-links a { padding: .45rem 0; border-bottom: 1px solid transparent; transition: color .18s, border-color .18s; } .social-links a:hover { color: var(--accent); border-color: var(--accent); }
 .site-footer { border-top: 1px solid var(--line); padding: 1.6rem 5.5vw; display: flex; justify-content: space-between; align-items: center; gap: 1rem; color: var(--muted-soft); font: .7rem 'DM Mono',monospace; letter-spacing: .04em; } .site-footer a { color: var(--accent); display: inline-flex; align-items: center; gap: .35rem; }
