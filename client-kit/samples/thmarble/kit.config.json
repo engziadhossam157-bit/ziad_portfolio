@@ -1,0 +1,161 @@
+{
+  "studio": {
+    "name": "Ziad Hossam",
+    "legalName": "Ziad Hossam Ibrahim",
+    "title": "Software Engineer",
+    "email": "eng.ziadhossam157@gmail.com",
+    "phone": "+20 102 082 4464",
+    "linkedin": "linkedin.com/in/ziad-hossam07",
+    "website": "",
+    "city": "Cairo, Egypt",
+    "nationalId": ""
+  },
+  "client": {
+    "contactName": "TH Marble team",
+    "company": "TH Marble & Granite",
+    "email": "thmarbleegypt.com/contact",
+    "phone": "+20 122 225 9846",
+    "address": "102 Abrag El Amal, Autostrad, Cairo"
+  },
+  "project": {
+    "name": "TH Marble website",
+    "type": "Company website",
+    "summary": "TH Marble & Granite has supplied and exported Egyptian marble and granite since 1998, with projects across Africa, Asia and Europe. Most new enquiries come by phone and WhatsApp, and international buyers have no place online to browse the stone range or see finished work. The company needs a website that shows its collection, proves its track record and turns visits into quote requests.",
+    "goals": [
+      "Show the full marble and granite collection with a page for every stone",
+      "Turn visitors into quote requests through a form and one-tap WhatsApp",
+      "Reach export buyers with English, French and Spanish versions"
+    ],
+    "inScope": [
+      "Home page with intro video, collection preview and project highlights",
+      "Marble and granite pages with a section for each of the 14 stones",
+      "Projects gallery, About page and Contact page with a quote form",
+      "Mobile layout, basic SEO, and an admin panel to edit content"
+    ],
+    "outOfScope": [
+      "Photography and video production",
+      "Domain, hosting and third-party subscription fees",
+      "Translation of content (translated text supplied by the client)",
+      "Ongoing maintenance after the support period"
+    ],
+    "startDate": "1 Mar 2026",
+    "endDate": "12 Apr 2026",
+    "proposalDate": "15 Feb 2026",
+    "proposalValidDays": 14,
+    "contractDate": "22 Feb 2026"
+  },
+  "money": {
+    "currency": "EGP",
+    "items": [
+      { "label": "Discovery and planning", "detail": "Kick-off workshop, sitemap, stone catalogue structure", "amount": 4000 },
+      { "label": "UI design", "detail": "Desktop and mobile designs for 6 page types", "amount": 10000 },
+      { "label": "Development", "detail": "WordPress build, stone pages, gallery, quote form, admin", "amount": 22000 },
+      { "label": "Launch and handover", "detail": "Deployment, speed and SEO checks, training session", "amount": 4000 }
+    ],
+    "discount": 0,
+    "milestones": [
+      { "name": "Deposit on signing", "percent": 50, "trigger": "Due before work starts" },
+      { "name": "Mid-project payment", "percent": 25, "trigger": "Due when the design is approved and development starts" },
+      { "name": "Final payment", "percent": 25, "trigger": "Due before launch and handover of files" }
+    ],
+    "hourlyRate": 400,
+    "minorEditFee": 250,
+    "lateFeePercentPerMonth": 2,
+    "paymentDueDays": 7,
+    "paymentMethods": ["Bank transfer", "InstaPay", "Vodafone Cash"],
+    "bankDetails": "Account details are sent with each invoice by email."
+  },
+  "terms": {
+    "revisionRoundsPerMilestone": 2,
+    "feedbackDays": 5,
+    "acceptanceDays": 5,
+    "supportDays": 30,
+    "pauseAfterDays": 30,
+    "restartFeePercent": 10,
+    "killFeePercent": 20,
+    "rushSurchargePercent": 30,
+    "noticeDays": 14
+  },
+  "kickoff": {
+    "audience": "Contractors, developers and homeowners in Egypt, plus importers in Africa, Asia and Europe. They want to compare stones, see finished projects and ask for a price, mostly from a phone.",
+    "metrics": [
+      "All 14 stones have a page with photos, finishes and a quote button",
+      "Quote form and WhatsApp work on every page, tested on mobile",
+      "French and Spanish pages are live and linked from the menu"
+    ],
+    "milestoneDates": ["5 Mar 2026", "15 Mar 2026", "19 Mar 2026", "5 Apr 2026"],
+    "risk": "Stone photos may arrive late. If they do, we launch with the photos we have and add the rest during the support period.",
+    "actions": [
+      { "action": "Send logo files, stone photos and the 22-second company video", "owner": "TH Marble team", "due": "5 Mar 2026" },
+      { "action": "Share the sitemap and catalogue structure for approval", "owner": "Ziad Hossam", "due": "4 Mar 2026" },
+      { "action": "Give hosting and domain access", "owner": "TH Marble team", "due": "5 Mar 2026" }
+    ]
+  },
+  "invoice": {
+    "number": "2026-001",
+    "issueDate": "22 Feb 2026",
+    "dueDate": "1 Mar 2026",
+    "lines": [
+      { "label": "Deposit (50%)", "detail": "TH Marble website, service agreement AGR-22Feb2026", "amount": 20000 }
+    ],
+    "amountPaid": 0
+  },
+  "midProject": {
+    "date": "22 Mar 2026",
+    "status": "On track",
+    "progressPercent": 55,
+    "done": [
+      "Sitemap and stone catalogue structure approved",
+      "Home, collection, stone, projects and contact designs approved",
+      "WordPress set up on a private preview link"
+    ],
+    "inProgress": [
+      "Building the marble and granite pages (8 of 14 stones done)",
+      "Quote form with WhatsApp and email notifications"
+    ],
+    "next": [
+      "Projects gallery and About page",
+      "French and Spanish versions",
+      "Speed, SEO and mobile testing"
+    ],
+    "feedbackNeeded": [
+      "Photos for the 6 remaining stones (Halayeb, Gandola, Red Royal, Black Aswan, Rosa El Nasr, Rosa Hodi)",
+      "Final wording for the About page",
+      "Translated French and Spanish text"
+    ],
+    "feedbackBy": "26 Mar 2026",
+    "changeRequests": [
+      { "item": "Add the 22-second company video to the home page", "requested": "18 Mar 2026", "cost": 1200, "timeImpact": "+1 day", "status": "Approved" },
+      { "item": "Extra language: Arabic version", "requested": "20 Mar 2026", "cost": 6000, "timeImpact": "+5 days", "status": "Awaiting approval" }
+    ]
+  },
+  "delivery": {
+    "date": "12 Apr 2026",
+    "deliverables": [
+      { "item": "Live website", "format": "URL", "where": "thmarbleegypt.com" },
+      { "item": "Source code and theme", "format": "Git repository", "where": "Private GitHub repository, transferred to TH Marble" },
+      { "item": "Design files", "format": "Figma", "where": "Shared Figma project" },
+      { "item": "Admin guide", "format": "PDF and video", "where": "Sent by email and saved in the client portal" }
+    ],
+    "domain": "thmarbleegypt.com, renewal reminder set with the registrar",
+    "backups": "Daily automatic backups by the host, kept for 30 days",
+    "stack": "WordPress, PHP, HTML, CSS, JavaScript",
+    "hosting": "Managed WordPress hosting under TH Marble's account"
+  },
+  "completion": {
+    "date": "20 Apr 2026",
+    "plannedEnd": "12 Apr 2026",
+    "actualEnd": "12 Apr 2026",
+    "results": [
+      "Done: 14 stone pages live, each with its own quote button",
+      "Done: quote form and WhatsApp button on every page",
+      "Done: English, French and Spanish versions live at launch"
+    ],
+    "highlights": [
+      "Marble and granite pages for all 14 stones, each linked to the quote form",
+      "Projects gallery showing finished floors, stairs and facades",
+      "English, French and Spanish versions for export buyers",
+      "Quote requests arrive by email and WhatsApp in one tap"
+    ]
+  }
+}

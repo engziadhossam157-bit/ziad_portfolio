@@ -1,12 +1,13 @@
 # Client kit
 
-Eight branded PDF documents for a client project, plus a proposal email.
+Nine branded PDF documents for a client project, plus a proposal email. A complete filled-in example for TH Marble & Granite is in `samples/thmarble/`.
 
 | # | File | Send it when |
 |---|------|-------------|
 | 1 | `out/01-proposal.pdf` | After the discovery call |
 | 9 | `09-proposal-email.md` | With the proposal attached |
-| 2 | `out/02-contract.pdf` | After the client accepts the proposal |
+| 2 | `out/02-contract.pdf` | After the client accepts the proposal (one page, signed) |
+| 2b | `out/02b-terms-and-conditions.pdf` | Attached to the contract (the rules, initialled) |
 | 3 | `out/03-invoice.pdf` | With the contract (deposit), then at each payment milestone |
 | 4 | `out/04-welcome.pdf` | Once the deposit is paid |
 | 5 | `out/05-kickoff.pdf` | Within a day of the kick-off call |
@@ -17,7 +18,7 @@ Eight branded PDF documents for a client project, plus a proposal email.
 ## Making documents for a client
 
 1. Fill in `kit.config.json`: client, project, prices (`money.items`, `hourlyRate`, `minorEditFee`), bank details, and the section for the document you are sending (`invoice`, `midProject`, `delivery` or `completion`).
-2. Run `node client-kit/build.mjs` from the repo root.
+2. Run `node client-kit/build.mjs` from the repo root. To keep each client separate, copy the config into its own folder and run `node client-kit/build.mjs path/to/kit.config.json path/to/output`, as in `samples/thmarble/`.
 3. Open the PDFs in `out/`. Anything still highlighted in yellow is a field you have not filled in.
 
 Totals, payment amounts and the invoice balance are calculated from the config. Change the policy numbers (revision rounds, late fee, support days and so on) in `terms` and every document updates.

@@ -1,5 +1,6 @@
 // Client kit: renders the eight project documents to PDF from kit.config.json.
-// Run from the repo root:  node client-kit/build.mjs
+// Run from the repo root:  node client-kit/build.mjs [config.json] [output folder]
+// With no arguments it uses client-kit/kit.config.json and writes to client-kit/out.
 // Empty config fields print as highlighted [placeholders], so a blank config gives you templates
 // and a filled one gives you documents ready to send. Chrome prints the PDFs (no npm packages);
 // set CHROME_PATH if it is not in the default Windows location.
@@ -10,10 +11,11 @@ import { fileURLToPath, pathToFileURL } from "node:url";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(here, "..");
-const cfg = JSON.parse(fs.readFileSync(path.join(here, "kit.config.json"), "utf8"));
+const cfgPath = path.resolve(process.argv[2] || path.join(here, "kit.config.json"));
+const cfg = JSON.parse(fs.readFileSync(cfgPath, "utf8"));
 const { studio: S, client: C, project: P, money: M, terms: T } = cfg;
-const outDir = path.join(here, "out");
-const htmlDir = path.join(here, "html");
+const outDir = path.resolve(process.argv[3] || path.join(here, "out"));
+const htmlDir = path.join(outDir, ".html");
 fs.mkdirSync(outDir, { recursive: true });
 fs.mkdirSync(htmlDir, { recursive: true });
 
@@ -71,7 +73,7 @@ th { text-align: left; font: 500 7pt Mono; letter-spacing: .12em; text-transform
 td { padding: 2.6mm 3mm 2.6mm 0; border-bottom: 1px solid var(--line); vertical-align: top; }
 tr { break-inside: avoid; }
 table.keep, .keep-block { break-inside: avoid; }
-td:first-child { white-space: nowrap; }
+td:first-child, td.nowrap { white-space: nowrap; }
 td:first-child small { white-space: normal; }
 td small { display: block; color: var(--muted); font-size: 8.4pt; }
 .num { text-align: right; white-space: nowrap; padding-right: 6mm; }
@@ -91,6 +93,14 @@ th:last-child, td:last-child { padding-right: 0; }
 .sign div { border-top: 1.2px solid var(--navy); padding-top: 2mm; }
 .sign .space { height: 16mm; border: 0; }
 .fine { font-size: 8pt; color: var(--muted); }
+/* One-page agreement: tighter rhythm so it always fits on a single A4 sheet. */
+.one-page .brand { padding-bottom: 5mm; margin-bottom: 6mm; }
+.one-page h1 { font-size: 26pt; margin-bottom: 4mm; }
+.one-page .meta { margin-bottom: 5mm; }
+.one-page .panel { padding: 3mm 5mm; margin: 0 0 4mm; }
+.one-page h2 { margin: 5mm 0 2mm; }
+.one-page td { padding: 1.8mm 3mm 1.8mm 0; }
+.one-page .sign { margin-top: 6mm; } .one-page .sign .space { height: 12mm; }
 .big { font: 700 22pt Geist; letter-spacing: -.03em; color: var(--navy); }
 `;
 
@@ -109,7 +119,7 @@ const totalsBox = () => `<div class="totals">
   ${M.discount ? `<div><span>Discount</span><span>- ${money(M.discount)}</span></div>` : ""}
   <div class="grand"><span>Total</span><span>${money(total, "total")}</span></div></div>`;
 const scheduleTable = () => `<table class="keep"><tr><th>Payment</th><th>When</th><th class="num">Share</th><th class="num">Amount</th></tr>${M.milestones.map((m) => `<tr><td>${esc(m.name)}</td><td>${esc(m.trigger)}</td><td class="num">${m.percent}%</td><td class="num">${money(pct(m.percent))}</td></tr>`).join("")}</table>`;
-const doc = (title, body) => `<!doctype html><html><head><meta charset="utf-8"><title>${esc(title)}</title><style>${css}</style></head><body>${body}</body></html>`;
+const doc = (title, body, cls = "") => `<!doctype html><html><head><meta charset="utf-8"><title>${esc(title)}</title><style>${css}</style></head><body class="${cls}">${body}</body></html>`;
 
 // ---------- 1. Proposal ----------
 const proposal = doc("Proposal", `
@@ -124,12 +134,12 @@ ${ul(P.goals, "Measurable goal, for example: let customers book online without c
 <h2>Scope</h2>
 <div class="cols"><div><h3>Included</h3>${ul(P.inScope, "Feature or page")}</div><div><h3>Not included</h3>${ul(P.outOfScope, "Excluded item")}</div></div>
 <p class="fine">Anything outside this list is quoted separately before any work starts on it.</p>
-<h2>How we will work</h2>
+<div class="keep-block"><h2>How we will work</h2>
 <table><tr><th>Phase</th><th>What happens</th><th>You receive</th></tr>
 <tr><td>1. Discovery</td><td>Kick-off call, requirements, sitemap and user flows</td><td>Kick-off document and project plan</td></tr>
 <tr><td>2. Design</td><td>Desktop and mobile designs for the agreed screens, ${T.revisionRoundsPerMilestone} revision rounds</td><td>Approved designs</td></tr>
 <tr><td>3. Build</td><td>Development, content setup and testing on a private preview link</td><td>Mid-project report and preview link</td></tr>
-<tr><td>4. Launch</td><td>Final testing, deployment, handover and a training session</td><td>Live product, files and admin guide</td></tr></table>
+<tr><td>4. Launch</td><td>Final testing, deployment, handover and a training session</td><td>Live product, files and admin guide</td></tr></table></div>
 <p>You can follow every milestone, deliverable and change request in your client portal on my website.</p>
 <h2>Investment</h2>
 ${itemsTable(M.items)}${totalsBox()}
@@ -166,15 +176,26 @@ const clauses = [
   ["Governing law", `This agreement is governed by the laws of the Arab Republic of Egypt. The parties first try to settle any dispute by talking in good faith. If that fails within 30 days, the courts of Cairo have jurisdiction.`],
   ["Whole agreement", `This agreement, the accepted proposal and any signed change requests are the full agreement between the parties. Changes to this agreement must be in writing and accepted by both parties. Email counts as writing.`],
 ];
+// One-page agreement; the rules live in the separate terms document, which it incorporates.
 const contract = doc("Contract", `
 ${header("Service agreement", "AGR-" + (P.contractDate || "000").replace(/\D/g, ""))}
 <h1>Service agreement</h1>
-<p class="lede">For ${projectName}. Plain-language terms that protect both sides and make clear what is included and what costs extra.</p>
-${meta([["Client", clientName], ["Service provider", esc(S.legalName)], ["Date", v(P.contractDate, "Date")], ["Total fee", money(total, "total")]])}
+${meta([["Project", projectName], ["Date", v(P.contractDate, "Date")], ["Timeline", `${v(P.startDate, "start")} to ${v(P.endDate, "end")}`], ["Total fee", money(total, "total")]])}
 <div class="cols panel"><div><span class="label">Client</span>${clientName}<br>${v(C.contactName, "Contact person")}<br>${v(C.address, "Address")}<br>${v(C.email, "Email")}</div>
 <div><span class="label">Service provider</span>${esc(S.legalName)}<br>${esc(S.city)}<br>${esc(S.email)}<br>${esc(S.phone)}</div></div>
+<p>The Service Provider will deliver ${projectName} as described in the accepted proposal dated ${v(P.proposalDate, "proposal date")}. The Client will pay the fee below and provide the content, access and feedback the project needs.</p>
+<h2>Payment schedule</h2>${scheduleTable()}
+<h2>Agreed terms</h2>
+<p>This agreement includes the Terms and Conditions attached to it (document TC-1.0), which set out revisions, paid edits and change requests, late payment, acceptance, ownership, support, termination and the governing law. The main points:</p>
+<ul><li>${T.revisionRoundsPerMilestone} revision rounds per milestone. Every edit after approval is extra and quoted in writing first.</li><li>Invoices are due in ${M.paymentDueDays} days. Late invoices add ${M.lateFeePercentPerMonth}% per month, and the deposit is non-refundable.</li><li>The Client owns the final work once all fees are paid. Governed by the laws of Egypt.</li></ul>
+${signatures()}
+`, "one-page");
+
+const terms = doc("Terms and conditions", `
+${header("Terms and conditions", "TC-1.0")}
+<h1>Terms and conditions</h1>
+<p class="lede">These terms are part of the service agreement for ${projectName} between ${clientName} (the "Client") and ${esc(S.legalName)} (the "Service Provider").</p>
 ${clauses.map(([h, t], i) => `<div class="clause"><h2>${i + 1}. ${h}</h2><p>${t}</p></div>`).join("")}
-<div class="keep-block"><h2>Payment schedule</h2>${scheduleTable()}</div>
 <div class="keep-block"><h2>Rates for extra work</h2>
 <table><tr><th>Request</th><th class="num">Price</th></tr>
 <tr><td>Extra revision round, or any edit after approval<small>Billed per hour, quoted first</small></td><td class="num">${money(M.hourlyRate, "hourly rate")} / hour</td></tr>
@@ -182,8 +203,8 @@ ${clauses.map(([h, t], i) => `<div class="clause"><h2>${i + 1}. ${h}</h2><p>${t}
 <tr><td>New page, feature or integration</td><td class="num">Fixed quote</td></tr>
 <tr><td>Rush delivery</td><td class="num">+${T.rushSurchargePercent}%</td></tr>
 <tr><td>Restarting a paused project</td><td class="num">${T.restartFeePercent}% of remaining fee</td></tr></table></div>
-${signatures()}
-<p class="fine" style="margin-top:8mm">This template is a starting point, not legal advice. Have a lawyer review it before first use. Documents filed with Egyptian courts or authorities must be in Arabic or bilingual.</p>
+<p class="fine" style="margin-top:6mm">Initials: Client ________ Service provider ________</p>
+<p class="fine">This template is a starting point, not legal advice. Have a lawyer review it before first use. Documents filed with Egyptian courts or authorities must be in Arabic or bilingual.</p>
 `);
 
 // ---------- 3. Invoice ----------
@@ -230,31 +251,32 @@ ${meta([["Project", projectName], ["Start", v(P.startDate, "Start date")], ["Pla
 `);
 
 // ---------- 5. Kick-off ----------
+const KO = cfg.kickoff || {};
+const at = (arr, i) => (arr || [])[i];
 const kickoff = doc("Kick-off", `
 ${header("Kick-off document", projectName)}
 <h1>Project kick-off</h1>
 <p class="lede">The plan we agreed on the kick-off call. Please check it and reply with any corrections within ${T.feedbackDays} business days.</p>
 ${meta([["Project", projectName], ["Kick-off date", v(P.startDate, "Date")], ["Launch target", v(P.endDate, "Date")], ["Approver", v(C.contactName, "Name")]])}
 <h2>Goals and how we measure them</h2>
-<table><tr><th>Goal</th><th>How we will know</th></tr>${P.goals.map((g) => `<tr><td>${v(g, "Goal")}</td><td><span class="ph">[Metric or test]</span></td></tr>`).join("")}</table>
-<h2>Audience</h2><p><span class="ph">[Who uses this product, what they need to do, and on which devices]</span></p>
+<table><tr><th>Goal</th><th>How we will know</th></tr>${P.goals.map((g, i) => `<tr><td>${v(g, "Goal")}</td><td>${v(at(KO.metrics, i), "Metric or test")}</td></tr>`).join("")}</table>
+<h2>Audience</h2><p>${v(KO.audience, "Who uses this product, what they need to do, and on which devices")}</p>
 <h2>Scope recap</h2><div class="cols"><div><h3>Included</h3>${ul(P.inScope, "Feature or page")}</div><div><h3>Not included</h3>${ul(P.outOfScope, "Excluded item")}</div></div>
 <h2>Milestones</h2>
 <table><tr><th>Milestone</th><th>Target date</th><th>Your action</th></tr>
-<tr><td>Content and access received</td><td><span class="ph">[Date]</span></td><td>Send items from the welcome pack</td></tr>
-<tr><td>Design ready for review</td><td><span class="ph">[Date]</span></td><td>Review and send one list of changes</td></tr>
-<tr><td>Design approved</td><td><span class="ph">[Date]</span></td><td>Approve, mid-project payment due</td></tr>
-<tr><td>Preview link ready</td><td><span class="ph">[Date]</span></td><td>Test and send one list of changes</td></tr>
+<tr><td>Content and access received</td><td>${v(at(KO.milestoneDates, 0), "Date")}</td><td>Send items from the welcome pack</td></tr>
+<tr><td>Design ready for review</td><td>${v(at(KO.milestoneDates, 1), "Date")}</td><td>Review and send one list of changes</td></tr>
+<tr><td>Design approved</td><td>${v(at(KO.milestoneDates, 2), "Date")}</td><td>Approve, mid-project payment due</td></tr>
+<tr><td>Preview link ready</td><td>${v(at(KO.milestoneDates, 3), "Date")}</td><td>Test and send one list of changes</td></tr>
 <tr><td>Launch</td><td>${v(P.endDate, "Date")}</td><td>Final approval and payment</td></tr></table>
 <h2>Roles</h2>
 <table><tr><th>Person</th><th>Role</th><th>Responsible for</th></tr>
 <tr><td>${v(C.contactName, "Name")}</td><td>Client approver</td><td>Content, feedback, final decisions</td></tr>
 <tr><td>${esc(S.name)}</td><td>Lead engineer</td><td>Design, development, testing, launch</td></tr></table>
 <h2>Assumptions and risks</h2>
-<ul><li>Content arrives by the date above. Late content moves the launch date by the same number of days.</li><li>Third-party services (payment gateways, APIs) work as their documentation describes.</li><li><span class="ph">[Project-specific risk and how we will handle it]</span></li></ul>
+<ul><li>Content arrives by the date above. Late content moves the launch date by the same number of days.</li><li>Third-party services (payment gateways, APIs) work as their documentation describes.</li><li>${v(KO.risk, "Project-specific risk and how we will handle it")}</li></ul>
 <h2>Action items</h2>
-<table><tr><th>Action</th><th>Owner</th><th>Due</th></tr><tr><td><span class="ph">[Action]</span></td><td><span class="ph">[Name]</span></td><td><span class="ph">[Date]</span></td></tr><tr><td><span class="ph">[Action]</span></td><td><span class="ph">[Name]</span></td><td><span class="ph">[Date]</span></td></tr></table>
-${signatures("Agreed by the client", "Prepared by")}
+<table><tr><th>Action</th><th>Owner</th><th>Due</th></tr>${(KO.actions || [{}, {}]).map((a) => `<tr><td>${v(a.action, "Action")}</td><td>${v(a.owner, "Name")}</td><td>${v(a.due, "Date")}</td></tr>`).join("")}</table>
 `);
 
 // ---------- 6. Mid-project ----------
@@ -268,8 +290,8 @@ ${meta([["Report date", v(MP.date, "Date")], ["Status", `<span class="pill">${es
 <h2>Coming next</h2>${ul(MP.next, "Next item")}
 <h2>Feedback I need</h2>
 <div class="panel">${ul(MP.feedbackNeeded, "Question or approval")}<p>Please reply by ${v(MP.feedbackBy, "date")} so the launch date holds.</p></div>
-<h2>Change requests</h2>
-<table><tr><th>Request</th><th>Requested</th><th class="num">Cost</th><th>Time impact</th><th>Status</th></tr>${MP.changeRequests.map((c) => `<tr><td>${v(c.item, "Change")}</td><td>${v(c.requested, "Date")}</td><td class="num">${money(c.cost, "quote")}</td><td>${v(c.timeImpact, "+ days")}</td><td>${esc(c.status)}</td></tr>`).join("")}</table>
+<div class="keep-block"><h2>Change requests</h2>
+<table><tr><th>Request</th><th>Requested</th><th class="num">Cost</th><th>Time impact</th><th>Status</th></tr>${MP.changeRequests.map((c) => `<tr><td>${v(c.item, "Change")}</td><td class="nowrap">${v(c.requested, "Date")}</td><td class="num">${money(c.cost, "quote")}</td><td>${v(c.timeImpact, "+ days")}</td><td>${esc(c.status)}</td></tr>`).join("")}</table></div>
 <p class="fine">Changes outside the agreed scope are billed as set out in the service agreement and start only after your written approval.</p>
 <div class="keep-block"><h2>Budget</h2>
 <table><tr><th>Payment</th><th class="num">Amount</th><th>Status</th></tr>${M.milestones.map((m, i) => `<tr><td>${esc(m.name)}</td><td class="num">${money(pct(m.percent))}</td><td>${["Paid", "Due now", "Due before launch"][i] ?? "Upcoming"}</td></tr>`).join("")}</table></div>
@@ -285,7 +307,7 @@ ${meta([["Handover date", v(D.date, "Date")], ["Project", projectName], ["Suppor
 <h2>What you receive</h2>
 <table><tr><th>Deliverable</th><th>Format</th><th>Where</th></tr>${D.deliverables.map((d) => `<tr><td>${v(d.item, "Item")}</td><td>${v(d.format, "Format")}</td><td>${v(d.where, "Link or location")}</td></tr>`).join("")}</table>
 <h2>Technical summary</h2>
-<table><tr><th>Area</th><th>Details</th></tr><tr><td>Stack</td><td>${v(D.stack, "Frameworks, languages, database")}</td></tr><tr><td>Hosting</td><td>${v(D.hosting, "Provider and plan")}</td></tr><tr><td>Domain</td><td><span class="ph">[Registrar and renewal date]</span></td></tr><tr><td>Backups</td><td><span class="ph">[What is backed up and how often]</span></td></tr></table>
+<table><tr><th>Area</th><th>Details</th></tr><tr><td>Stack</td><td>${v(D.stack, "Frameworks, languages, database")}</td></tr><tr><td>Hosting</td><td>${v(D.hosting, "Provider and plan")}</td></tr><tr><td>Domain</td><td>${v(D.domain, "Registrar and renewal date")}</td></tr><tr><td>Backups</td><td>${v(D.backups, "What is backed up and how often")}</td></tr></table>
 <div class="keep-block"><h2>Access and passwords</h2>
 <div class="panel"><p>Passwords are never written in this document. I share them once through a password manager or an encrypted link. After handover, please change every password and turn on two-factor authentication.</p></div>
 <ul class="check"><li>Admin account for the product</li><li>Hosting and domain accounts moved to your name</li><li>Code repository ownership transferred</li><li>Third-party services (email, analytics, payments) under your account</li></ul></div>
@@ -305,7 +327,7 @@ ${header("Project completion", projectName)}
 ${meta([["Completed", v(K.date, "Date")], ["Planned end", v(K.plannedEnd || P.endDate, "Date")], ["Actual end", v(K.actualEnd, "Date")], ["Final fee", money(total, "total")]])}
 <h2>What we delivered</h2>${ul(K.highlights, "Delivered feature and the result it gives the client")}
 <h2>Goals check</h2>
-<table><tr><th>Goal</th><th>Result</th></tr>${P.goals.map((g) => `<tr><td>${v(g, "Goal")}</td><td><span class="ph">[Result or first numbers]</span></td></tr>`).join("")}</table>
+<table><tr><th>Goal</th><th>Result</th></tr>${P.goals.map((g, i) => `<tr><td>${v(g, "Goal")}</td><td>${v((K.results || [])[i], "Result or first numbers")}</td></tr>`).join("")}</table>
 <h2>Closing confirmations</h2>
 <ul class="check"><li>All invoices paid in full</li><li>Ownership of the final work transferred to the client</li><li>Accounts, files and passwords handed over</li><li>Free support runs until ${T.supportDays} days after launch</li></ul>
 <h2>After the support period</h2>
@@ -317,7 +339,7 @@ ${signatures("Confirmed by the client", "Completed by")}
 `);
 
 // ---------- render ----------
-const docs = [["01-proposal", proposal], ["02-contract", contract], ["03-invoice", invoice], ["04-welcome", welcome], ["05-kickoff", kickoff], ["06-mid-project-report", mid], ["07-final-deliverables", deliverables], ["08-project-completion", completion]];
+const docs = [["01-proposal", proposal], ["02-contract", contract], ["02b-terms-and-conditions", terms], ["03-invoice", invoice], ["04-welcome", welcome], ["05-kickoff", kickoff], ["06-mid-project-report", mid], ["07-final-deliverables", deliverables], ["08-project-completion", completion]];
 const chrome = process.env.CHROME_PATH || ["C:/Program Files/Google/Chrome/Application/chrome.exe", "C:/Program Files (x86)/Google/Chrome/Application/chrome.exe", "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome", "/usr/bin/google-chrome"].find((p) => fs.existsSync(p));
 if (!chrome) throw new Error("Chrome not found. Set CHROME_PATH to a Chrome or Chromium executable.");
 for (const [name, html] of docs) {
