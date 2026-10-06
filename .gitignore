@@ -29,3 +29,5 @@ Thumbs.db
 WhatsApp Image*.jpeg
 .vercel
 client-kit/**/.html/
+client-kit/clients/
+client-kit/app/node_modules/

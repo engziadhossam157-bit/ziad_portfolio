@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data: file:; font-src 'self' file:; style-src 'self' 'unsafe-inline'; frame-src 'self' about: data:; script-src 'self'" />
+  <title>Pactloom</title>
+  <link rel="stylesheet" href="app.css" />
+</head>
+<body>
+  <header class="titlebar">
+    <div class="brand"><img src="../assets/logo-mark.svg" alt="" /><span>Pactloom</span></div>
+    <div class="crumbs" id="crumbs"></div>
+    <div class="save-state" id="saveState" aria-live="polite"></div>
+  </header>
+
+  <aside class="rail">
+    <section class="client-picker">
+      <label class="field-label" for="clientSelect">Client</label>
+      <div class="select-wrap">
+        <select id="clientSelect"></select>
+        <i class="icon" data-icon="chevron-down"></i>
+      </div>
+      <button class="ghost-btn" id="newClientBtn" type="button"><i class="icon" data-icon="plus"></i>New client</button>
+      <form class="new-client" id="newClientForm" hidden>
+        <input id="newClientName" type="text" placeholder="Company or client name" autocomplete="off" required />
+        <div class="row"><button class="primary-btn small" type="submit">Create</button><button class="ghost-btn small" type="button" id="newClientCancel">Cancel</button></div>
+      </form>
+    </section>
+
+    <nav class="doc-list" id="docList" aria-label="Documents"></nav>
+
+    <footer class="rail-foot">
+      <div class="theme-switch" role="radiogroup" aria-label="Theme">
+        <button type="button" role="radio" data-theme="system" title="Follow Windows"><i class="icon" data-icon="monitor"></i></button>
+        <button type="button" role="radio" data-theme="light" title="Light"><i class="icon" data-icon="sun"></i></button>
+        <button type="button" role="radio" data-theme="dark" title="Dark"><i class="icon" data-icon="moon"></i></button>
+      </div>
+      <button class="ghost-btn small" id="openFolderBtn" type="button" title="Open this client's folder"><i class="icon" data-icon="folder-open"></i>Folder</button>
+    </footer>
+  </aside>
+
+  <main class="editor">
+    <div class="editor-head">
+      <div>
+        <h1 id="docTitle">Proposal</h1>
+        <p class="doc-gaps" id="docGaps"></p>
+      </div>
+      <button class="ghost-btn small" id="nextGapBtn" type="button"><i class="icon" data-icon="crosshair"></i>Next gap</button>
+    </div>
+    <form class="form" id="form" autocomplete="off" onsubmit="return false"></form>
+  </main>
+
+  <section class="preview">
+    <div class="preview-bar">
+      <div class="zoom">
+        <button class="icon-btn" id="zoomOut" type="button" title="Zoom out"><i class="icon" data-icon="zoom-out"></i></button>
+        <button class="zoom-value" id="zoomFit" type="button" title="Fit to width">100%</button>
+        <button class="icon-btn" id="zoomIn" type="button" title="Zoom in"><i class="icon" data-icon="zoom-in"></i></button>
+      </div>
+      <div class="actions">
+        <button class="ghost-btn" id="exportAllBtn" type="button"><i class="icon" data-icon="arrow-down-to-line"></i>Export all</button>
+        <button class="primary-btn" id="exportBtn" type="button"><i class="icon" data-icon="download"></i>Export PDF</button>
+      </div>
+    </div>
+    <div class="stage" id="stage"><iframe id="page" title="Document preview"></iframe></div>
+  </section>
+
+  <div class="toast" id="toast" role="status" hidden></div>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>

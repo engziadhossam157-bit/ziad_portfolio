@@ -10,14 +10,19 @@ import { execFileSync } from "node:child_process";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
-const root = path.resolve(here, "..");
-const cfgPath = path.resolve(process.argv[2] || path.join(here, "kit.config.json"));
-const cfg = JSON.parse(fs.readFileSync(cfgPath, "utf8"));
+
+
+/** The documents in send order, as [file name, title]. The Pactloom desktop app lists these. */
+export const DOCUMENTS = [
+  ["01-proposal", "Proposal"], ["02-contract", "Contract"], ["02b-terms-and-conditions", "Terms and conditions"],
+  ["03-invoice", "Invoice"], ["04-welcome", "Welcome pack"], ["05-kickoff", "Kick-off"],
+  ["06-mid-project-report", "Mid-project report"], ["07-final-deliverables", "Final deliverables"],
+  ["08-project-completion", "Project completion"], ["09-proposal-email", "Proposal email"],
+];
+
+/** Renders every document to standalone HTML. `emailMd` is the proposal email's Markdown, or null to skip it. */
+export function renderKit(cfg, { emailMd = null } = {}) {
 const { studio: S, client: C, project: P, money: M, terms: T } = cfg;
-const outDir = path.resolve(process.argv[3] || path.join(here, "out"));
-const htmlDir = path.join(outDir, ".html");
-fs.mkdirSync(outDir, { recursive: true });
-fs.mkdirSync(htmlDir, { recursive: true });
 
 // ---------- helpers ----------
 const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
@@ -33,8 +38,8 @@ const pct = (p) => (total === null ? null : Math.round((total * p) / 100 * 100) 
 const ul = (items, label) => `<ul>${items.map((i) => `<li>${v(i, label)}</li>`).join("")}</ul>`;
 const clientName = v(C.company || C.contactName, "Client name");
 const projectName = v(P.name, "Project name");
-const logo = fs.readFileSync(path.join(root, "brand", "logo-mark.svg"), "utf8").replace("<svg ", '<svg class="mark" ');
-const font = (file) => pathToFileURL(path.join(root, "node_modules", "@fontsource", file)).href;
+const logo = fs.readFileSync(path.join(here, "assets", "logo-mark.svg"), "utf8").replace("<svg ", '<svg class="mark" ');
+const font = (file) => pathToFileURL(path.join(here, "assets", "fonts", path.basename(file))).href;
 
 const css = `
 @font-face { font-family: Geist; font-weight: 400; src: url(${font("geist-sans/files/geist-sans-latin-400-normal.woff2")}); }
@@ -343,14 +348,13 @@ ${signatures("Confirmed by the client", "Completed by")}
 // ---------- render ----------
 const docs = [["01-proposal", proposal], ["02-contract", contract], ["02b-terms-and-conditions", terms], ["03-invoice", invoice], ["04-welcome", welcome], ["05-kickoff", kickoff], ["06-mid-project-report", mid], ["07-final-deliverables", deliverables], ["08-project-completion", completion]];
 
-// 9. Proposal email: rendered from 09-proposal-email.md next to the config, when there is one.
-const emailMd = path.join(path.dirname(cfgPath), "09-proposal-email.md");
-if (fs.existsSync(emailMd)) {
+// 9. Proposal email, from the Markdown file kept next to the config.
+if (emailMd !== null) {
   const inline = (t) => esc(t).replace(/\*\*(.+?)\*\*/g, "<b>$1</b>").replace(/`(.+?)`/g, "<code>$1</code>");
   // Blank lines separate paragraphs; consecutive lines (like a sign-off) stay together.
   let body = "", list = false, para = [];
   const flush = () => { if (para.length) body += `<p>${para.map(inline).join("<br>")}</p>`; para = []; };
-  for (const line of fs.readFileSync(emailMd, "utf8").split(/\r?\n/)) {
+  for (const line of emailMd.split(/\r?\n/)) {
     if (!line.startsWith("- ") && list) { body += "</ul>"; list = false; }
     if (line.startsWith("# ")) continue; // the page header already names the document
     else if (line.startsWith("## ")) { flush(); body += `<h2 class="new-page">${inline(line.slice(3))}</h2>`; }
@@ -363,6 +367,18 @@ if (fs.existsSync(emailMd)) {
   if (list) body += "</ul>";
   docs.push(["09-proposal-email", doc("Proposal email", `${header("Proposal email", projectName)}<h1>Proposal email</h1><div class="email">${body}</div>`)]);
 }
+return docs;
+}
+
+// ---------- command line ----------
+if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+const cfgPath = path.resolve(process.argv[2] || path.join(here, "kit.config.json"));
+const cfg = JSON.parse(fs.readFileSync(cfgPath, "utf8"));
+const emailPath = path.join(path.dirname(cfgPath), "09-proposal-email.md");
+const docs = renderKit(cfg, { emailMd: fs.existsSync(emailPath) ? fs.readFileSync(emailPath, "utf8") : null });
+const outDir = path.resolve(process.argv[3] || path.join(here, "out"));
+const htmlDir = path.join(outDir, ".html");
+fs.mkdirSync(htmlDir, { recursive: true });
 const chrome = process.env.CHROME_PATH || ["C:/Program Files/Google/Chrome/Application/chrome.exe", "C:/Program Files (x86)/Google/Chrome/Application/chrome.exe", "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome", "/usr/bin/google-chrome"].find((p) => fs.existsSync(p));
 if (!chrome) throw new Error("Chrome not found. Set CHROME_PATH to a Chrome or Chromium executable.");
 for (const [name, html] of docs) {
@@ -370,4 +386,5 @@ for (const [name, html] of docs) {
   fs.writeFileSync(file, html);
   execFileSync(chrome, ["--headless=new", "--disable-gpu", "--no-pdf-header-footer", "--allow-file-access-from-files", `--print-to-pdf=${path.join(outDir, `${name}.pdf`)}`, pathToFileURL(file).href], { stdio: "ignore" });
   console.log("built", `${name}.pdf`);
+}
 }

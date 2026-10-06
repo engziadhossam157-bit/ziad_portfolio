@@ -1,0 +1,16 @@
+{
+  "name": "pactloom",
+  "productName": "Pactloom",
+  "version": "1.0.0",
+  "description": "Fill in and export client project documents.",
+  "main": "main.mjs",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "start": "set ELECTRON_RUN_AS_NODE=&& electron ."
+  },
+  "devDependencies": {
+    "electron": "^44.5.1",
+    "lucide-static": "^1.52.0"
+  }
+}
