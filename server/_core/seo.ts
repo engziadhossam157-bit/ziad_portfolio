@@ -5,8 +5,8 @@ type RouteMeta = { title: string; description: string; noindex?: boolean; image?
 
 const PAGE_META: Record<string, RouteMeta> = {
   "/": {
-    title: "Ziad Hossam | Full-Stack Developer & AI Engineer",
-    description: "Ziad Hossam is a full-stack developer studying AI engineering. He builds websites, web applications, and AI-driven tools.",
+    title: "Ziad Hossam | Software Engineer",
+    description: "Ziad Hossam is a software engineer in Cairo. He builds websites, web applications and desktop apps for businesses.",
   },
   "/about": {
     title: "About | Ziad Hossam",
@@ -85,7 +85,7 @@ export function applySeoMeta(html: string, req: Request): string {
   const description = escapeHtml(meta.description);
   const origin = getRequestOrigin(req);
   const url = `${origin}${pathname === "/" ? "" : pathname}`;
-  const image = `${origin}${meta.image ?? "/images/og-image.jpg"}`;
+  const image = `${origin}${meta.image ?? "/images/og-ziad.jpg"}`;
   const robots = meta.noindex ? "noindex, nofollow" : "index, follow";
 
   return html
