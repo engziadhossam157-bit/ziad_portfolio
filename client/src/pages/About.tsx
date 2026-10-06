@@ -47,8 +47,15 @@ export default function About() {
           <div className="hero-actions"><Link href="/start-project" className="button button-accent" ref={heroCtaRef}>START A PROJECT <ArrowUpRight size={18} /></Link></div>
         </div>
         <div className="about-photo-frame">
-          <Tilt3D className="about-photo-card" intensity={10}>
-            <img {...profileImageProps(about.data?.profileImageUrl)} alt={name} fetchPriority="high" />
+          <Tilt3D className={`about-photo-card${about.data?.profileImageUrl ? "" : " is-cutout"}`} intensity={10}>
+            {!about.data?.profileImageUrl && <svg className="photo-swiss" viewBox="0 0 100 122" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+              <g className="swiss-grid">{[20, 40, 60, 80].map((x) => <line key={x} x1={x} y1="0" x2={x} y2="122" />)}</g>
+              <path className="swiss-quarter" d="M0 122V68A54 54 0 0 1 54 122Z" />
+              <circle className="swiss-circle" cx="56" cy="50" r="31" />
+              <circle className="swiss-ring" cx="62" cy="45" r="37" />
+              <rect className="swiss-square" x="11" y="22" width="9" height="9" />
+            </svg>}
+            <img {...profileImageProps(about.data?.profileImageUrl, about.data?.profileImageUrl ? "about" : "home")} alt={name} fetchPriority="high" />
           </Tilt3D>
         </div>
       </section>

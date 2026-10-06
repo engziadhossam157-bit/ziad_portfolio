@@ -461,6 +461,15 @@ h1,h2,h3,p { margin-top: 0; } h1 { font-size: clamp(4.8rem,10vw,10.4rem); line-h
 .about-hero-intro { color: var(--muted); font-size: 1.05rem; line-height: 1.75; max-width: 520px; margin: 1.5rem 0 2.2rem; }
 .about-photo-frame { position: relative; margin-right: 18px; }
 .about-photo-frame::before { content: ''; position: absolute; inset: 18px -18px -18px 18px; background: var(--navy); border-radius: var(--radius-media); z-index: 0; }
+/* About portrait: the cutout on a Swiss-style composition (grid, circle, offset ring, quarter circle,
+   square). Static on purpose, as a counterpoint to the floating blobs on the home hero. */
+.photo-swiss { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 0; }
+.swiss-grid line { stroke: var(--surface); stroke-opacity: .09; stroke-width: .25; }
+.swiss-quarter { fill: var(--accent-soft); }
+.swiss-circle { fill: var(--surface-alt); }
+.swiss-ring { fill: none; stroke: var(--surface); stroke-opacity: .55; stroke-width: .4; }
+.swiss-square { fill: var(--surface-alt); }
+.about-photo-card.is-cutout img { position: absolute; z-index: 1; left: 50%; bottom: 0; width: auto; height: 90%; max-width: none; transform: translateX(-50%); object-fit: contain; }
 .about-photo-card { position: relative; z-index: 1; border-radius: var(--radius-media); overflow: hidden; isolation: isolate; aspect-ratio: .82; background: var(--navy); box-shadow: 0 1px 2px rgba(0,31,73,.08), 0 28px 56px -18px rgba(0,31,73,.38); }
 
 .about-section-title { font-size: clamp(2.6rem,5vw,4.6rem); line-height: .9; letter-spacing: -.06em; margin: 1rem 0 0; }
@@ -522,6 +531,7 @@ h1,h2,h3,p { margin-top: 0; } h1 { font-size: clamp(4.8rem,10vw,10.4rem); line-h
 @media (max-width: 1150px) and (min-width: 851px) { .process-row { grid-template-columns: repeat(3,minmax(0,1fr)); } }
 @media (max-width: 850px) {
   .about-hero { display: flex; flex-direction: column-reverse; gap: 2.5rem; padding-top: 2.5rem; padding-bottom: 5rem; }
+  .about-photo-frame { align-self: stretch; }
   .about-photo-card { aspect-ratio: 1.1; }
   .who-section, .capability-section, .process-section, .journey-section, .about-page .work-section { padding: 5rem 1.25rem; }
   .about-certificates { padding: 1rem 1.25rem 5rem; }
