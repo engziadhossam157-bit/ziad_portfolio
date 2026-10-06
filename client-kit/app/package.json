@@ -7,10 +7,64 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "start": "set ELECTRON_RUN_AS_NODE=&& electron ."
+    "start": "node scripts/sync.mjs && set ELECTRON_RUN_AS_NODE=&& electron .",
+    "dist": "node scripts/sync.mjs && set ELECTRON_RUN_AS_NODE=&& electron-builder --win nsis"
   },
   "devDependencies": {
     "electron": "^44.5.1",
+    "electron-builder": "^26.15.3",
     "lucide-static": "^1.52.0"
+  },
+  "author": "Ziad Hossam",
+  "homepage": "https://www.linkedin.com/in/ziad-hossam07",
+  "build": {
+    "appId": "com.ziadhossam.pactloom",
+    "productName": "Pactloom",
+    "copyright": "Copyright 2026 Ziad Hossam",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "main.mjs",
+      "preload.cjs",
+      "index.html",
+      "app.css",
+      "app.js",
+      "schema.js",
+      "icons/**",
+      "assets/**",
+      "icon.ico",
+      "icon.png",
+      "package.json"
+    ],
+    "extraResources": [
+      {
+        "from": "..",
+        "to": "kit",
+        "filter": [
+          "build.mjs",
+          "kit.config.json",
+          "09-proposal-email.md",
+          "assets/**",
+          "samples/thmarble/kit.config.json",
+          "samples/thmarble/09-proposal-email.md"
+        ]
+      }
+    ],
+    "win": {
+      "target": "nsis",
+      "icon": "icon.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Pactloom",
+      "installerIcon": "icon.ico",
+      "uninstallerIcon": "icon.ico",
+      "artifactName": "Pactloom-Setup-${version}.exe"
+    }
   }
 }

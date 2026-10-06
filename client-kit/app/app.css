@@ -1,8 +1,8 @@
-@font-face { font-family: Geist; font-weight: 400; src: url(../assets/fonts/geist-sans-latin-400-normal.woff2); }
-@font-face { font-family: Geist; font-weight: 500; src: url(../assets/fonts/geist-sans-latin-500-normal.woff2); }
-@font-face { font-family: Geist; font-weight: 600; src: url(../assets/fonts/geist-sans-latin-600-normal.woff2); }
-@font-face { font-family: Geist; font-weight: 700; src: url(../assets/fonts/geist-sans-latin-700-normal.woff2); }
-@font-face { font-family: Mono; font-weight: 400; src: url(../assets/fonts/dm-mono-latin-400-normal.woff2); }
+@font-face { font-family: Geist; font-weight: 400; src: url(assets/fonts/geist-sans-latin-400-normal.woff2); }
+@font-face { font-family: Geist; font-weight: 500; src: url(assets/fonts/geist-sans-latin-500-normal.woff2); }
+@font-face { font-family: Geist; font-weight: 600; src: url(assets/fonts/geist-sans-latin-600-normal.woff2); }
+@font-face { font-family: Geist; font-weight: 700; src: url(assets/fonts/geist-sans-latin-700-normal.woff2); }
+@font-face { font-family: Mono; font-weight: 400; src: url(assets/fonts/dm-mono-latin-400-normal.woff2); }
 
 /* ---------- tokens: light is the paper studio, dark is the navy night desk ---------- */
 :root {

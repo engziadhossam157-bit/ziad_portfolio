@@ -3,13 +3,16 @@ import { app, BrowserWindow, ipcMain, nativeTheme, shell } from "electron";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import { fileURLToPath } from "node:url";
-import { DOCUMENTS, renderKit } from "../build.mjs";
+import { fileURLToPath, pathToFileURL } from "node:url";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
-const kitDir = path.resolve(here, "..");
+// The document engine (build.mjs, fonts, templates, sample) sits next to the app during development
+// and is bundled into resources/kit by the installer.
+const kitDir = app.isPackaged ? path.join(process.resourcesPath, "kit") : path.resolve(here, "..");
+const { DOCUMENTS, renderKit } = await import(pathToFileURL(path.join(kitDir, "build.mjs")).href);
 // Each client is a folder holding kit.config.json, 09-proposal-email.md and an exported pdf/ folder.
-const clientsDir = path.join(kitDir, "clients");
+// Installed: Documents\Pactloom\clients, so client files survive app updates and uninstalls.
+const clientsDir = app.isPackaged ? path.join(app.getPath("documents"), "Pactloom", "clients") : path.join(kitDir, "clients");
 const settingsFile = path.join(app.getPath("userData"), "settings.json");
 
 const readJson = (file, fallback) => { try { return JSON.parse(fs.readFileSync(file, "utf8")); } catch { return fallback; } };
@@ -112,7 +115,7 @@ function createWindow() {
 
 ipcMain.handle("kit:init", () => {
   seedWorkspace();
-  return { documents: DOCUMENTS, clients: listClients(), lastClient: settings.lastClient, theme: settings.theme, assets: path.join(kitDir, "assets") };
+  return { documents: DOCUMENTS, clients: listClients(), lastClient: settings.lastClient, theme: settings.theme, clientsDir };
 });
 ipcMain.handle("kit:clients", () => listClients());
 ipcMain.handle("kit:load", (_e, slug) => loadClient(slug));
@@ -127,6 +130,7 @@ ipcMain.handle("kit:theme", (_e, theme) => { nativeTheme.themeSource = theme; se
 app.whenReady().then(() => {
   nativeTheme.themeSource = settings.theme;
   fs.mkdirSync(clientsDir, { recursive: true });
+  seedWorkspace();
   createWindow();
 });
 app.on("window-all-closed", () => app.quit());

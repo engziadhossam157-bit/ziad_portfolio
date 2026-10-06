@@ -6,7 +6,7 @@ const el = (tag, props = {}, ...kids) => {
   for (const kid of kids.flat()) if (kid != null) node.append(kid);
   return node;
 };
-const iconUrl = (name) => `url("node_modules/lucide-static/icons/${name}.svg")`;
+const iconUrl = (name) => `url("icons/${name}.svg")`;
 const icon = (name) => { const i = el("i", { className: "icon" }); i.style.setProperty("--src", iconUrl(name)); return i; };
 const hydrateIcons = (root = document) => root.querySelectorAll("[data-icon]").forEach((i) => i.style.setProperty("--src", iconUrl(i.dataset.icon)));
 document.documentElement.style.setProperty("--chev", iconUrl("chevron-down"));
@@ -403,7 +403,7 @@ document.addEventListener("keydown", (e) => {
   hydrateIcons();
   const init = await kit.init();
   Object.assign(state, { documents: init.documents, clients: init.clients });
-  state.folderRoot = init.assets.replace(/assets$/, "clients");
+  state.folderRoot = init.clientsDir;
   await setTheme(init.theme);
   const slug = init.clients.some((c) => c.slug === init.lastClient) ? init.lastClient : init.clients[0]?.slug;
   await openClient(slug);

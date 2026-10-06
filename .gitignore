@@ -31,3 +31,6 @@ WhatsApp Image*.jpeg
 client-kit/**/.html/
 client-kit/clients/
 client-kit/app/node_modules/
+client-kit/app/dist/
+client-kit/app/assets/
+client-kit/app/icons/
