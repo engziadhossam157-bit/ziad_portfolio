@@ -1,0 +1,104 @@
+{
+  "studio": {
+    "name": "Ziad Hossam",
+    "legalName": "Ziad Hossam Ibrahim",
+    "title": "Software Engineer",
+    "email": "eng.ziadhossam157@gmail.com",
+    "phone": "+20 102 082 4464",
+    "linkedin": "linkedin.com/in/ziad-hossam07",
+    "website": "",
+    "city": "Cairo, Egypt",
+    "nationalId": ""
+  },
+  "client": {
+    "contactName": "",
+    "company": "",
+    "email": "",
+    "phone": "",
+    "address": ""
+  },
+  "project": {
+    "name": "",
+    "type": "",
+    "summary": "",
+    "goals": ["", "", ""],
+    "inScope": ["", "", "", ""],
+    "outOfScope": ["Copywriting and photography, unless listed above", "Domain, hosting and third-party subscription fees", "Ongoing maintenance after the support period"],
+    "startDate": "",
+    "endDate": "",
+    "proposalDate": "",
+    "proposalValidDays": 14,
+    "contractDate": ""
+  },
+  "money": {
+    "currency": "EGP",
+    "items": [
+      { "label": "Discovery and planning", "detail": "Requirements, sitemap, user flows", "amount": null },
+      { "label": "UI design", "detail": "Desktop and mobile designs for agreed screens", "amount": null },
+      { "label": "Development", "detail": "Front end, back end, database, admin", "amount": null },
+      { "label": "Launch and handover", "detail": "Deployment, testing, training session", "amount": null }
+    ],
+    "discount": 0,
+    "milestones": [
+      { "name": "Deposit on signing", "percent": 50, "trigger": "Due before work starts" },
+      { "name": "Mid-project payment", "percent": 25, "trigger": "Due when the design is approved and development starts" },
+      { "name": "Final payment", "percent": 25, "trigger": "Due before launch and handover of files" }
+    ],
+    "hourlyRate": null,
+    "minorEditFee": null,
+    "lateFeePercentPerMonth": 2,
+    "paymentDueDays": 7,
+    "paymentMethods": ["Bank transfer", "InstaPay", "Vodafone Cash"],
+    "bankDetails": ""
+  },
+  "terms": {
+    "revisionRoundsPerMilestone": 2,
+    "feedbackDays": 5,
+    "acceptanceDays": 5,
+    "supportDays": 30,
+    "pauseAfterDays": 30,
+    "restartFeePercent": 10,
+    "killFeePercent": 20,
+    "rushSurchargePercent": 30,
+    "noticeDays": 14
+  },
+  "invoice": {
+    "number": "",
+    "issueDate": "",
+    "dueDate": "",
+    "lines": [
+      { "label": "Deposit (50%)", "detail": "", "amount": null }
+    ],
+    "amountPaid": 0
+  },
+  "midProject": {
+    "date": "",
+    "status": "On track",
+    "progressPercent": null,
+    "done": ["", ""],
+    "inProgress": ["", ""],
+    "next": ["", ""],
+    "feedbackNeeded": ["", ""],
+    "feedbackBy": "",
+    "changeRequests": [
+      { "item": "", "requested": "", "cost": null, "timeImpact": "", "status": "Awaiting approval" }
+    ]
+  },
+  "delivery": {
+    "date": "",
+    "deliverables": [
+      { "item": "Live website", "format": "URL", "where": "" },
+      { "item": "Source code", "format": "Git repository", "where": "" },
+      { "item": "Design files", "format": "Figma", "where": "" },
+      { "item": "Admin guide", "format": "PDF", "where": "" }
+    ],
+    "stack": "",
+    "hosting": ""
+  },
+  "completion": {
+    "date": "",
+    "plannedEnd": "",
+    "actualEnd": "",
+    "highlights": ["", ""]
+  }
+}
