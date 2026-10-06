@@ -101,6 +101,22 @@ Render's free tier spins the service down after inactivity, causing a slow
 first request (~30s cold start). A paid instance (~$7/mo) keeps it always on.
 Railway or Fly.io work the same way if you'd rather use one of those instead.
 
+## 7b. Deploy to Vercel (alternative to Render)
+
+`vercel.json` points Vercel at `pnpm build:vercel` (`scripts/build-vercel.mjs`), which
+writes the Build Output API layout: the Vite client goes to Vercel's CDN, and one Node
+function (`server/_core/vercel.ts`) handles the API, auth, sitemap and page HTML.
+
+1. In Vercel, **Add New > Project** and import this repo. Leave the framework preset
+   on "Other"; `vercel.json` sets the build and install commands.
+2. Add environment variables: `TURSO_DATABASE_URL`, `TURSO_AUTH_TOKEN`, `JWT_SECRET`,
+   `OWNER_EMAIL`, `APP_URL` (your `https://<project>.vercel.app` address), plus any
+   optional Google, AWS, or Resend keys.
+3. Deploy. Every push to `main` redeploys automatically.
+
+Limits compared with Render: request bodies are capped at 4.5 MB per request, and the
+function only reaches Turso over the network (no `file:` database URLs).
+
 ## What still needs your attention after deploy
 
 - **Profile photo**: the site uses `client/public/images/profile-ziad-portrait*`
