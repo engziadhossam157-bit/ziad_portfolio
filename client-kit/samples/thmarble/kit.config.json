@@ -38,11 +38,11 @@
       "Translation of content (translated text supplied by the client)",
       "Ongoing maintenance after the support period"
     ],
-    "startDate": "1 Mar 2026",
-    "endDate": "12 Apr 2026",
-    "proposalDate": "15 Feb 2026",
+    "startDate": "23 Sep 2026",
+    "endDate": "5 Oct 2026",
+    "proposalDate": "13 Sep 2026",
     "proposalValidDays": 14,
-    "contractDate": "22 Feb 2026"
+    "contractDate": "16 Sep 2026"
   },
   "money": {
     "currency": "EGP",
@@ -116,45 +116,45 @@
       "French and Spanish pages are live and linked from the menu"
     ],
     "milestoneDates": [
-      "5 Mar 2026",
-      "15 Mar 2026",
-      "19 Mar 2026",
-      "5 Apr 2026"
+      "24 Sep 2026",
+      "26 Sep 2026",
+      "28 Sep 2026",
+      "2 Oct 2026"
     ],
     "risk": "Stone photos may arrive late. If they do, we launch with the photos we have and add the rest during the support period.",
     "actions": [
       {
         "action": "Send logo files, stone photos and the 22-second company video",
         "owner": "TH Marble team",
-        "due": "5 Mar 2026"
+        "due": "24 Sep 2026"
       },
       {
         "action": "Share the sitemap and catalogue structure for approval",
         "owner": "Ziad Hossam",
-        "due": "4 Mar 2026"
+        "due": "23 Sep 2026"
       },
       {
         "action": "Give hosting and domain access",
         "owner": "TH Marble team",
-        "due": "5 Mar 2026"
+        "due": "24 Sep 2026"
       }
     ]
   },
   "invoice": {
     "number": "2026-001",
-    "issueDate": "22 Feb 2026",
-    "dueDate": "1 Mar 2026",
+    "issueDate": "16 Sep 2026",
+    "dueDate": "23 Sep 2026",
     "lines": [
       {
         "label": "Deposit (50%)",
-        "detail": "TH Marble website, service agreement AGR-22Feb2026",
+        "detail": "TH Marble website, service agreement of 16 Sep 2026",
         "amount": 21000
       }
     ],
     "amountPaid": 0
   },
   "midProject": {
-    "date": "22 Mar 2026",
+    "date": "29 Sep 2026",
     "status": "On track",
     "progressPercent": 55,
     "done": [
@@ -176,26 +176,26 @@
       "Final wording for the About page",
       "Translated French and Spanish text"
     ],
-    "feedbackBy": "26 Mar 2026",
+    "feedbackBy": "30 Sep 2026",
     "changeRequests": [
       {
         "item": "Add the 22-second company video to the home page",
-        "requested": "18 Mar 2026",
+        "requested": "26 Sep 2026",
         "cost": 1200,
-        "timeImpact": "+1 day",
+        "timeImpact": "None",
         "status": "Approved"
       },
       {
         "item": "Extra language: Arabic version",
-        "requested": "20 Mar 2026",
+        "requested": "28 Sep 2026",
         "cost": 6000,
-        "timeImpact": "+5 days",
+        "timeImpact": "+3 days",
         "status": "Awaiting approval"
       }
     ]
   },
   "delivery": {
-    "date": "12 Apr 2026",
+    "date": "5 Oct 2026",
     "deliverables": [
       {
         "item": "Live website",
@@ -224,9 +224,9 @@
     "hosting": "Managed WordPress hosting under TH Marble's account"
   },
   "completion": {
-    "date": "20 Apr 2026",
-    "plannedEnd": "12 Apr 2026",
-    "actualEnd": "12 Apr 2026",
+    "date": "6 Oct 2026",
+    "plannedEnd": "5 Oct 2026",
+    "actualEnd": "5 Oct 2026",
     "results": [
       "Done: 14 stone pages live, each with its own quote button",
       "Done: quote form and WhatsApp button on every page",
