@@ -32,6 +32,7 @@ export function SiteHeader() {
     <header className="site-header">
       <Link href="/" className="wordmark" aria-label="Ziad Hossam, home">ZIAD<span>.</span></Link>
       <nav id="site-nav" className={`public-nav ${menuOpen ? "open" : ""}`} aria-label="Main">
+        <Link href="/" onClick={close} aria-current={location === "/" ? "page" : undefined}>HOME</Link>
         <Link href="/about" onClick={close} aria-current={location === "/about" ? "page" : undefined}>ABOUT</Link>
         <Link href="/projects" onClick={close} aria-current={location.startsWith("/projects") ? "page" : undefined}>PROJECTS</Link>
         <a href={section("services")} onClick={close}>SERVICES</a>

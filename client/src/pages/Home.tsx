@@ -135,7 +135,7 @@ export default function Home() {
 
       <section className="hero section-grid" ref={heroSectionRef}>
         <div className="hero-copy">
-          <p className="eyebrow" ref={heroEyebrowRef}>{about.data?.careerFocus?.toUpperCase() || "FULL-STACK DEVELOPER"}</p>
+          <p className="eyebrow" ref={heroEyebrowRef}>{about.data?.careerFocus?.toUpperCase() || "SOFTWARE ENGINEER"}</p>
           <h1 className="hero-headline" ref={heroHeadingRef}>
             <span className="line"><span className="line-inner">BUILDING</span></span>
             <span className="line"><span className="line-inner"><span>BETTER</span></span></span>
@@ -152,6 +152,7 @@ export default function Home() {
           <div className="photo-panel" ref={photoPanelRef} />
           <Tilt3D className="photo-tilt" intensity={6}>
             <div className={`photo-frame-mask${about.data?.profileImageUrl ? "" : " is-cutout"}`} ref={photoFrameRef}>
+              {!about.data?.profileImageUrl && <div className="photo-blobs" aria-hidden="true"><span /><span /><span /></div>}
               <img {...profileImageProps(about.data?.profileImageUrl, "home")} alt={about.data?.name || "Ziad Hossam"} fetchPriority="high" />
             </div>
           </Tilt3D>

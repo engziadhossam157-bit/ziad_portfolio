@@ -598,6 +598,14 @@ h1,h2,h3,p { margin-top: 0; } h1 { font-size: clamp(4.8rem,10vw,10.4rem); line-h
 /* Home portrait: a transparent cutout standing in a navy card; the offset frame is an outline so it still reads against the navy. */
 .photo-panel { background: transparent; border: 1.5px solid var(--navy); }
 .photo-frame-mask.is-cutout { background: radial-gradient(90% 70% at 50% 28%, #1B3D6E 0%, var(--navy) 58%, var(--navy-deep) 100%); }
+/* Organic blobs behind the cutout: sand, soft blue and an outline, each slowly morphing its radii. */
+.photo-blobs { position: absolute; inset: 0; z-index: 0; overflow: hidden; }
+.photo-blobs span { position: absolute; display: block; animation: blob-morph 14s ease-in-out infinite alternate; }
+.photo-blobs span:nth-child(1) { left: 14%; top: 10%; width: 74%; aspect-ratio: 1; background: var(--surface-alt); border-radius: 58% 42% 49% 51% / 44% 56% 44% 56%; }
+.photo-blobs span:nth-child(2) { right: -16%; bottom: -10%; width: 62%; aspect-ratio: 1; background: var(--accent-soft); opacity: .55; border-radius: 41% 59% 63% 37% / 52% 38% 62% 48%; animation-duration: 18s; animation-direction: alternate-reverse; }
+.photo-blobs span:nth-child(3) { left: -12%; top: 46%; width: 46%; aspect-ratio: 1; border: 1.5px solid color-mix(in srgb, var(--surface) 45%, transparent); border-radius: 63% 37% 54% 46% / 40% 62% 38% 60%; animation-duration: 22s; }
+@keyframes blob-morph { 0% { transform: rotate(0deg) scale(1); } 50% { border-radius: 40% 60% 38% 62% / 58% 42% 58% 42%; } 100% { transform: rotate(14deg) scale(1.05); border-radius: 52% 48% 61% 39% / 47% 63% 37% 53%; } }
+.photo-frame-mask.is-cutout img { z-index: 1; }
 .photo-frame-mask.is-cutout img { position: absolute; left: 50%; bottom: 0; width: 112%; height: auto; max-width: none; transform: translateX(-50%); object-fit: contain; }
 
 @media (max-width: 850px) {

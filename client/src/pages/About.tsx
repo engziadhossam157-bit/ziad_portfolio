@@ -55,14 +55,14 @@ export default function About() {
 
       <section className="who-section section-grid" id="who-i-am">
         <div className="who-grid">
-          <Reveal><h2>A builder who thinks in <em>systems</em>, not just screens.</h2></Reveal>
+          <Reveal><h2>A builder who thinks in <em>business</em>, not just screens.</h2></Reveal>
           <Reveal delay={100} className="who-copy">
             <p>{bio}</p>
             <p>I don't chase every new framework. I look for the version of a problem that is worth solving, then build toward it deliberately: web development first, full-stack engineering next, and now AI engineering as the thread connecting all of it.</p>
           </Reveal>
         </div>
         <Reveal delay={160} className="quick-facts">
-          <div><span>FOCUS</span><strong>{about.data?.careerFocus || "AI Engineering"}</strong></div>
+          <div><span>FOCUS</span><strong>{about.data?.careerFocus || "Software Engineer"}</strong></div>
           <div><span>BASED IN</span><strong>{about.data?.location || LOCATION}</strong></div>
           <div><span>CURRENTLY</span><strong>Studying AI Engineering</strong></div>
         </Reveal>
