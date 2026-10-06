@@ -50,6 +50,14 @@ const trackerShot = (name: string, caption: string): ProjectShot => ({
   caption,
 });
 
+const thmarbleShot = (name: string, caption: string, alt: string): ProjectShot => ({
+  src: `/images/projects/thmarble/${name}-1600.webp`,
+  width: 1600,
+  height: 1000,
+  alt,
+  caption,
+});
+
 const sadaqahShot = (name: string, caption: string, alt: string): ProjectShot => ({
   src: `/images/projects/sadaqah-quran-academy/${name}-1600.webp`,
   width: 1600,
@@ -161,13 +169,23 @@ export const PROJECTS: PortfolioProject[] = [
     category: "Website",
     type: "Business / Corporate Website",
     platform: "WordPress",
+    liveUrl: "https://thmarbleegypt.com",
     summary: "A company website for a marble business that presents its products and services, with image galleries.",
     description: [
       "Thmarble is a professional business website developed for a marble-related business. The website provides an online presence for the company and presents its products and services through a structured and professional interface.",
     ],
     technologies: ["WordPress", "PHP", "HTML", "CSS", "JavaScript"],
     areas: ["WordPress development", "Business website development", "Website customization", "Product/service presentation", "Image galleries", "Responsive design", "Content management", "UI customization"],
-    shots: [],
+    shots: [
+      thmarbleShot("home", "Home page", "TH Marble & Granite home page, with a polished marble floor photo behind the headline"),
+      thmarbleShot("collection", "The collection", "The collection section listing marble and granite types beside a large stone preview"),
+      thmarbleShot("stones", "Stone gallery", "Gallery of fourteen Egyptian marble and granite tiles, each labeled with its name"),
+      thmarbleShot("projects", "Projects", "Projects page with photos of finished marble floors and a staircase"),
+      thmarbleShot("marble", "Marble page", "Marble page header over a textured marble wall"),
+      thmarbleShot("contact", "Contact and quote form", "Contact page with phone numbers, address and the request a quote form"),
+    ],
+    ogImage: "/images/projects/thmarble/og.jpg",
+    tint: "sand",
   },
 ];
 
