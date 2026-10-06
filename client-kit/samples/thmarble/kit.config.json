@@ -33,7 +33,7 @@
       "Mobile layout, basic SEO, and an admin panel to edit content"
     ],
     "outOfScope": [
-      "Photography and video production",
+      "Photography (stone photos supplied by the client)",
       "Domain, hosting and third-party subscription fees",
       "Translation of content (translated text supplied by the client)",
       "Ongoing maintenance after the support period"
@@ -124,7 +124,7 @@
     "risk": "Stone photos may arrive late. If they do, we launch with the photos we have and add the rest during the support period.",
     "actions": [
       {
-        "action": "Send logo files, stone photos and the 22-second company video",
+        "action": "Send logo files and stone photos",
         "owner": "TH Marble team",
         "due": "24 Sep 2026"
       },
@@ -179,9 +179,9 @@
     "feedbackBy": "30 Sep 2026",
     "changeRequests": [
       {
-        "item": "Add the 22-second company video to the home page",
+        "item": "Produce a 22-second company video and place it on the home page",
         "requested": "26 Sep 2026",
-        "cost": 1200,
+        "cost": 5500,
         "timeImpact": "None",
         "status": "Approved"
       },
@@ -201,6 +201,11 @@
         "item": "Live website",
         "format": "URL",
         "where": "thmarbleegypt.com"
+      },
+      {
+        "item": "22-second company video",
+        "format": "MP4 (1080p), plus a web version",
+        "where": "Home page and the shared project folder"
       },
       {
         "item": "Source code and theme",
@@ -234,6 +239,7 @@
     ],
     "highlights": [
       "Marble and granite pages for all 14 stones, each linked to the quote form",
+      "A 22-second company video, produced for the project, playing on the home page",
       "Projects gallery showing finished floors, stairs and facades",
       "English, French and Spanish versions for export buyers",
       "Quote requests arrive by email and WhatsApp in one tap"
