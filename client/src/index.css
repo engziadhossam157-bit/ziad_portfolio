@@ -78,7 +78,17 @@ section[id] { scroll-margin-top: calc(var(--header-h) + 12px); }
 .wordmark { font-weight: 700; font-size: 1.15rem; letter-spacing: -.05em; } .wordmark span,.accent-dot { color: var(--accent); }
 .public-nav { display: flex; align-items: center; gap: 2rem; font-family: 'DM Mono', monospace; font-size: .72rem; color: var(--muted); letter-spacing: .04em; }
 .public-nav a { padding: .5rem 0; transition: color .18s ease; } .public-nav a:hover { color: var(--accent); }
-.public-nav a[aria-current="page"] { color: var(--accent); text-decoration: underline; text-underline-offset: 6px; }
+.public-nav a[aria-current="page"] { color: var(--accent); }
+/* Desktop: an underline grows from the left on hover and stays put for the current page,
+   so every link (including the current one and CLIENT PORTAL) responds to hover. */
+@media (min-width: 851px) {
+  .public-nav a { position: relative; }
+  .public-nav a::after { content: ''; position: absolute; left: 0; right: 0; bottom: .2rem; height: 1.5px; background: currentColor; transform: scaleX(0); transform-origin: left; transition: transform .25s var(--ease-out); }
+  .public-nav a:hover::after, .public-nav a:focus-visible::after, .public-nav a[aria-current="page"]::after { transform: scaleX(1); }
+  .public-nav a[aria-current="page"]:hover::after { transform: scaleX(.4); }
+}
+.nav-portal svg { transition: transform .22s var(--ease-out); } .nav-portal:hover svg { transform: translate(2px,-2px); }
+@media (max-width: 850px) { .public-nav a:hover { background: var(--line-soft); } }
 .nav-portal { display: inline-flex; gap: .45rem; align-items: center; color: var(--foreground) !important; }
 .nav-mobile-cta { display: none !important; }
 .header-actions { display: flex; align-items: center; gap: 1rem; }
