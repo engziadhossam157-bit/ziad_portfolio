@@ -47,22 +47,54 @@
   "money": {
     "currency": "EGP",
     "items": [
-      { "label": "Discovery and planning", "detail": "Kick-off workshop, sitemap, stone catalogue structure", "amount": 4000 },
-      { "label": "UI design", "detail": "Desktop and mobile designs for 6 page types", "amount": 10000 },
-      { "label": "Development", "detail": "WordPress build, stone pages, gallery, quote form, admin", "amount": 22000 },
-      { "label": "Launch and handover", "detail": "Deployment, speed and SEO checks, training session", "amount": 4000 }
+      {
+        "label": "Discovery and planning",
+        "detail": "Kick-off workshop, sitemap, stone catalogue structure",
+        "amount": 4000
+      },
+      {
+        "label": "UI design",
+        "detail": "Desktop and mobile designs for 6 page types",
+        "amount": 11000
+      },
+      {
+        "label": "Development",
+        "detail": "WordPress build, 14 stone pages, gallery, quote form, 3 languages, admin",
+        "amount": 23000
+      },
+      {
+        "label": "Launch and handover",
+        "detail": "Deployment, speed and SEO checks, training session",
+        "amount": 4000
+      }
     ],
     "discount": 0,
     "milestones": [
-      { "name": "Deposit on signing", "percent": 50, "trigger": "Due before work starts" },
-      { "name": "Mid-project payment", "percent": 25, "trigger": "Due when the design is approved and development starts" },
-      { "name": "Final payment", "percent": 25, "trigger": "Due before launch and handover of files" }
+      {
+        "name": "Deposit on signing",
+        "percent": 50,
+        "trigger": "Due before work starts"
+      },
+      {
+        "name": "Mid-project payment",
+        "percent": 25,
+        "trigger": "Due when the design is approved and development starts"
+      },
+      {
+        "name": "Final payment",
+        "percent": 25,
+        "trigger": "Due before launch and handover of files"
+      }
     ],
     "hourlyRate": 400,
-    "minorEditFee": 250,
+    "minorEditFee": 200,
     "lateFeePercentPerMonth": 2,
     "paymentDueDays": 7,
-    "paymentMethods": ["Bank transfer", "InstaPay", "Vodafone Cash"],
+    "paymentMethods": [
+      "Bank transfer",
+      "InstaPay",
+      "Vodafone Cash"
+    ],
     "bankDetails": "Account details are sent with each invoice by email."
   },
   "terms": {
@@ -83,12 +115,29 @@
       "Quote form and WhatsApp work on every page, tested on mobile",
       "French and Spanish pages are live and linked from the menu"
     ],
-    "milestoneDates": ["5 Mar 2026", "15 Mar 2026", "19 Mar 2026", "5 Apr 2026"],
+    "milestoneDates": [
+      "5 Mar 2026",
+      "15 Mar 2026",
+      "19 Mar 2026",
+      "5 Apr 2026"
+    ],
     "risk": "Stone photos may arrive late. If they do, we launch with the photos we have and add the rest during the support period.",
     "actions": [
-      { "action": "Send logo files, stone photos and the 22-second company video", "owner": "TH Marble team", "due": "5 Mar 2026" },
-      { "action": "Share the sitemap and catalogue structure for approval", "owner": "Ziad Hossam", "due": "4 Mar 2026" },
-      { "action": "Give hosting and domain access", "owner": "TH Marble team", "due": "5 Mar 2026" }
+      {
+        "action": "Send logo files, stone photos and the 22-second company video",
+        "owner": "TH Marble team",
+        "due": "5 Mar 2026"
+      },
+      {
+        "action": "Share the sitemap and catalogue structure for approval",
+        "owner": "Ziad Hossam",
+        "due": "4 Mar 2026"
+      },
+      {
+        "action": "Give hosting and domain access",
+        "owner": "TH Marble team",
+        "due": "5 Mar 2026"
+      }
     ]
   },
   "invoice": {
@@ -96,7 +145,11 @@
     "issueDate": "22 Feb 2026",
     "dueDate": "1 Mar 2026",
     "lines": [
-      { "label": "Deposit (50%)", "detail": "TH Marble website, service agreement AGR-22Feb2026", "amount": 20000 }
+      {
+        "label": "Deposit (50%)",
+        "detail": "TH Marble website, service agreement AGR-22Feb2026",
+        "amount": 21000
+      }
     ],
     "amountPaid": 0
   },
@@ -125,17 +178,45 @@
     ],
     "feedbackBy": "26 Mar 2026",
     "changeRequests": [
-      { "item": "Add the 22-second company video to the home page", "requested": "18 Mar 2026", "cost": 1200, "timeImpact": "+1 day", "status": "Approved" },
-      { "item": "Extra language: Arabic version", "requested": "20 Mar 2026", "cost": 6000, "timeImpact": "+5 days", "status": "Awaiting approval" }
+      {
+        "item": "Add the 22-second company video to the home page",
+        "requested": "18 Mar 2026",
+        "cost": 1200,
+        "timeImpact": "+1 day",
+        "status": "Approved"
+      },
+      {
+        "item": "Extra language: Arabic version",
+        "requested": "20 Mar 2026",
+        "cost": 6000,
+        "timeImpact": "+5 days",
+        "status": "Awaiting approval"
+      }
     ]
   },
   "delivery": {
     "date": "12 Apr 2026",
     "deliverables": [
-      { "item": "Live website", "format": "URL", "where": "thmarbleegypt.com" },
-      { "item": "Source code and theme", "format": "Git repository", "where": "Private GitHub repository, transferred to TH Marble" },
-      { "item": "Design files", "format": "Figma", "where": "Shared Figma project" },
-      { "item": "Admin guide", "format": "PDF and video", "where": "Sent by email and saved in the client portal" }
+      {
+        "item": "Live website",
+        "format": "URL",
+        "where": "thmarbleegypt.com"
+      },
+      {
+        "item": "Source code and theme",
+        "format": "Git repository",
+        "where": "Private GitHub repository, transferred to TH Marble"
+      },
+      {
+        "item": "Design files",
+        "format": "Figma",
+        "where": "Shared Figma project"
+      },
+      {
+        "item": "Admin guide",
+        "format": "PDF and video",
+        "where": "Sent by email and saved in the client portal"
+      }
     ],
     "domain": "thmarbleegypt.com, renewal reminder set with the registrar",
     "backups": "Daily automatic backups by the host, kept for 30 days",

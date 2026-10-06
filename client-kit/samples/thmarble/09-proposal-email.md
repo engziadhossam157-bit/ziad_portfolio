@@ -15,7 +15,7 @@ As promised, my proposal for the TH Marble website is attached. In short:
 - **What I will build:** a company website with a page for each of your 14 marble and granite stones, a projects gallery, and a quote form linked to WhatsApp
 - **Result for you:** buyers in Egypt and abroad browse the full collection on their phone and send a quote request without calling first
 - **Timeline:** about 6 weeks, with launch around 12 April 2026
-- **Investment:** EGP 40,000, paid in three stages (EGP 20,000 to start, EGP 10,000 at design approval, EGP 10,000 before launch)
+- **Investment:** EGP 42,000, paid in three stages (EGP 21,000 to start, EGP 10,500 at design approval, EGP 10,500 before launch)
 
 The proposal also covers the exact scope, the revision rounds included, and how changes are handled, so there are no surprises later.
 
