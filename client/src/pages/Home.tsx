@@ -152,10 +152,14 @@ export default function Home() {
           <div className="photo-panel" ref={photoPanelRef} />
           <Tilt3D className="photo-tilt" intensity={6}>
             <div className={`photo-frame-mask${about.data?.profileImageUrl ? "" : " is-cutout"}`} ref={photoFrameRef}>
-              {!about.data?.profileImageUrl && <div className="photo-blobs" aria-hidden="true"><span /><span /><span /></div>}
+              {!about.data?.profileImageUrl && <div className="photo-aurora" aria-hidden="true" />}
               <img {...profileImageProps(about.data?.profileImageUrl, "home")} alt={about.data?.name || "Ziad Hossam"} fetchPriority="high" />
             </div>
           </Tilt3D>
+          <div className="hero-credential">
+            <img src="/images/depi-logo.webp" alt="" width="174" height="160" />
+            <div><strong>DEPI Round 5 · Data Science</strong><span>Digital Egypt Pioneers, 9 months</span></div>
+          </div>
         </div>
       </section>
 

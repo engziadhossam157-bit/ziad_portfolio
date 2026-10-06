@@ -598,13 +598,23 @@ h1,h2,h3,p { margin-top: 0; } h1 { font-size: clamp(4.8rem,10vw,10.4rem); line-h
 /* Home portrait: a transparent cutout standing in a navy card; the offset frame is an outline so it still reads against the navy. */
 .photo-panel { background: transparent; border: 1.5px solid var(--navy); }
 .photo-frame-mask.is-cutout { background: radial-gradient(90% 70% at 50% 28%, #1B3D6E 0%, var(--navy) 58%, var(--navy-deep) 100%); }
-/* Organic blobs behind the cutout: sand, soft blue and an outline, each slowly morphing its radii. */
-.photo-blobs { position: absolute; inset: 0; z-index: 0; overflow: hidden; }
-.photo-blobs span { position: absolute; display: block; animation: blob-morph 14s ease-in-out infinite alternate; }
-.photo-blobs span:nth-child(1) { left: 14%; top: 10%; width: 74%; aspect-ratio: 1; background: var(--surface-alt); border-radius: 58% 42% 49% 51% / 44% 56% 44% 56%; }
-.photo-blobs span:nth-child(2) { right: -16%; bottom: -10%; width: 62%; aspect-ratio: 1; background: var(--accent-soft); opacity: .55; border-radius: 41% 59% 63% 37% / 52% 38% 62% 48%; animation-duration: 18s; animation-direction: alternate-reverse; }
-.photo-blobs span:nth-child(3) { left: -12%; top: 46%; width: 46%; aspect-ratio: 1; border: 1.5px solid color-mix(in srgb, var(--surface) 45%, transparent); border-radius: 63% 37% 54% 46% / 40% 62% 38% 60%; animation-duration: 22s; }
-@keyframes blob-morph { 0% { transform: rotate(0deg) scale(1); } 50% { border-radius: 40% 60% 38% 62% / 58% 42% 58% 42%; } 100% { transform: rotate(14deg) scale(1.05); border-radius: 52% 48% 61% 39% / 47% 63% 37% 53%; } }
+/* Aurora behind the cutout: a warm rim light behind the head and a cool glow below it, drifting slowly,
+   over a faint dot grid that fades out toward the edges. Brand navy/sand only. */
+.photo-aurora { position: absolute; inset: -20%; z-index: 0; background:
+    radial-gradient(38% 30% at 52% 34%, color-mix(in srgb, var(--surface-alt) 55%, transparent), transparent 70%),
+    radial-gradient(45% 38% at 24% 78%, color-mix(in srgb, var(--accent-soft) 80%, transparent), transparent 72%),
+    radial-gradient(40% 34% at 84% 62%, color-mix(in srgb, #4C7CC4 45%, transparent), transparent 70%);
+  filter: blur(18px); animation: aurora-drift 12s ease-in-out infinite alternate; }
+.photo-frame-mask.is-cutout::before { content: ''; position: absolute; inset: 0; z-index: 0; pointer-events: none;
+  background-image: radial-gradient(color-mix(in srgb, var(--surface) 22%, transparent) 1px, transparent 1.2px); background-size: 18px 18px;
+  -webkit-mask-image: radial-gradient(70% 60% at 50% 40%, #000, transparent 85%); mask-image: radial-gradient(70% 60% at 50% 40%, #000, transparent 85%); }
+@keyframes aurora-drift { 0% { transform: translate3d(0,0,0) scale(1); } 100% { transform: translate3d(3%,-4%,0) scale(1.08); } }
+/* DEPI credential: a light card overlapping the portrait's bottom-left corner. */
+.hero-credential { position: absolute; z-index: 2; left: -34px; bottom: 34px; display: flex; align-items: center; gap: .8rem; max-width: 340px; padding: .7rem 1rem .7rem .75rem; border: 1px solid var(--line); border-radius: var(--radius-card); background: var(--surface); box-shadow: 0 1px 2px rgba(0,31,73,.08), 0 18px 36px -16px rgba(0,31,73,.4); }
+.hero-credential img { flex: 0 0 auto; width: 44px; height: auto; }
+.hero-credential strong { display: block; color: var(--navy); font-size: .9rem; line-height: 1.25; letter-spacing: -.01em; }
+.hero-credential span { display: block; margin-top: .15rem; white-space: nowrap; color: var(--muted); font: .66rem/1.4 'DM Mono',monospace; letter-spacing: .02em; }
+@media (max-width: 850px) { .hero-credential { left: 50%; bottom: -26px; transform: translateX(-50%); width: max-content; max-width: calc(100% - 1rem); } }
 .photo-frame-mask.is-cutout img { z-index: 1; }
 .photo-frame-mask.is-cutout img { position: absolute; left: 50%; bottom: 0; width: 112%; height: auto; max-width: none; transform: translateX(-50%); object-fit: contain; }
 
