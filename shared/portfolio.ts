@@ -50,6 +50,14 @@ const trackerShot = (name: string, caption: string): ProjectShot => ({
   caption,
 });
 
+const teiShot = (name: string, height: number, caption: string, alt: string): ProjectShot => ({
+  src: `/images/projects/tei-workshop-erp/${name}-1600.webp`,
+  width: 1600,
+  height,
+  alt,
+  caption,
+});
+
 const thmarbleShot = (name: string, caption: string, alt: string): ProjectShot => ({
   src: `/images/projects/thmarble/${name}-1600.webp`,
   width: 1600,
@@ -131,7 +139,17 @@ export const PROJECTS: PortfolioProject[] = [
     ],
     technologies: ["React.js", "Node.js", "Express.js", "MongoDB", "REST APIs", "JavaScript", "HTML/CSS"],
     areas: ["Full-stack development", "ERP system architecture", "Authentication and authorization", "Role-based access control", "Database design", "REST API development", "Business logic", "Dashboard development", "User and data management"],
-    shots: [],
+    shots: [
+      teiShot("dashboard", 1000, "Dashboard", "TEI Workshop ERP dashboard with counts of studies under review, open work orders, late tasks and open quotations, and a feed of recent updates"),
+      teiShot("cost-study", 1867, "Cost study", "Cost study for a conveyor roller with drawing revisions, cost lines for material, turning, milling, heat treatment and QC, and the final price with waste, risk and profit"),
+      teiShot("work-order", 1922, "Work order", "Work order tracking each operation's planned and actual dates and cost, the variance, WhatsApp updates per task, and the quality, delivery and invoicing steps"),
+      teiShot("quotations", 1000, "Quotations", "Quotations list with status, totals and actions, above the quotation entry form"),
+      teiShot("quotation-pdf", 2265, "Quotation PDF", "Generated quotation document with client details, commercial offer table, VAT totals in words, technical offer and terms"),
+      teiShot("tasks", 1000, "Standalone tasks", "Standalone tasks with owner, due date, days late, status, WhatsApp notification and attachments"),
+      teiShot("master-data", 1000, "Master data", "Master data for employees, clients, suppliers, cost categories, units and quotation terms"),
+      teiShot("settings", 1000, "Settings", "Company settings for quotations, default technical offer and WhatsApp notifications"),
+    ],
+    ogImage: "/images/projects/tei-workshop-erp/og.jpg",
     featured: true,
   },
   {

@@ -583,6 +583,8 @@ h1,h2,h3,p { margin-top: 0; } h1 { font-size: clamp(4.8rem,10vw,10.4rem); line-h
 .case-gallery { padding-bottom: 6rem; }
 .gallery-grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 1.8rem 1.2rem; }
 .gallery-grid figure { margin: 0; }
+/* Full-page captures get a 16:10 thumbnail from the top; the lightbox shows the whole page. */
+.gallery-grid img.is-tall { aspect-ratio: 16 / 10; object-fit: cover; object-position: top; }
 .gallery-grid img { display: block; width: 100%; height: auto; border: 1px solid var(--line); border-radius: var(--radius); transition: transform .35s var(--ease-out), box-shadow .35s var(--ease-out); }
 .shot-button:hover img { transform: translateY(-4px); box-shadow: 0 18px 40px -16px rgba(0,31,73,.35); }
 .gallery-grid figcaption { margin-top: .7rem; color: var(--muted); font: .72rem 'DM Mono',monospace; letter-spacing: .04em; }

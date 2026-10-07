@@ -80,7 +80,7 @@ export default function ProjectDetail() {
             <Reveal key={shot.src} delay={(i % 3) * 60}>
               <figure>
                 <button type="button" className="shot-button" onClick={() => setActive(i + 1)} aria-label={`Enlarge: ${shot.caption}`}>
-                  <img src={smallShot(shot.src)} width={800} height={Math.round(shot.height / 2)} alt={shot.alt} loading="lazy" decoding="async" />
+                  <img src={smallShot(shot.src)} className={shot.height / shot.width > 0.7 ? "is-tall" : undefined} width={800} height={Math.round(shot.height / 2)} alt={shot.alt} loading="lazy" decoding="async" />
                 </button>
                 <figcaption>{shot.caption}</figcaption>
               </figure>
