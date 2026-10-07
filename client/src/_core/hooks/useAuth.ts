@@ -13,8 +13,8 @@ type UseAuthOptions = {
  * lands in the client portal.
  */
 export function portalLink(user: { role?: string | null } | null | undefined) {
-  if (user?.role === "admin") return { href: "/admin", label: "ADMIN" };
-  return { href: user ? "/portal" : "/login?next=/portal", label: "CLIENT PORTAL" };
+  // Public buttons always lead to the client side; the admin signs in at /admin/login.
+  return { href: user && user.role !== "admin" ? "/portal" : "/login?next=/portal", label: "CLIENT PORTAL" };
 }
 
 export function useAuth(options?: UseAuthOptions) {

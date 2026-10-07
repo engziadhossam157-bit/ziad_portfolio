@@ -58,13 +58,11 @@ export default function Login() {
           <p className="section-kicker">CLIENT SIGN-IN</p>
           {loading ? (
             <p>Checking your session…</p>
-          ) : user ? (
+          ) : user && user.role !== "admin" ? (
             <>
               <h1>Welcome back.</h1>
-              <p>{user.role === "admin" ? "You are signed in as the admin." : "You are already signed in."}</p>
-              <Link href={user.role === "admin" ? "/admin" : safeNext ?? "/portal"} className="button button-accent">
-                {user.role === "admin" ? "OPEN ADMIN DASHBOARD" : "ENTER CLIENT PORTAL"} <ArrowUpRight size={17} />
-              </Link>
+              <p>You are already signed in.</p>
+              <Link href={safeNext ?? "/portal"} className="button button-accent">ENTER CLIENT PORTAL <ArrowUpRight size={17} /></Link>
             </>
           ) : (
             <>
