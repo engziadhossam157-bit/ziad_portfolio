@@ -99,7 +99,7 @@ export default function StartProject() {
             <label>NAME<input className={fieldClass} required autoComplete="name" value={answers.name} onChange={(e) => update("name", e.target.value)} placeholder="Your name" /></label>
             <label>EMAIL<input className={fieldClass} type="email" required autoComplete="email" value={answers.email} onChange={(e) => update("email", e.target.value)} placeholder="you@company.com" /></label>
             <label><span>COMPANY <Optional /></span><input className={fieldClass} autoComplete="organization" value={answers.company} onChange={(e) => update("company", e.target.value)} placeholder="Company or brand" /></label>
-            <label><span>PHONE <Optional /></span><input className={fieldClass} type="tel" autoComplete="tel" value={answers.phone} onChange={(e) => update("phone", e.target.value)} placeholder="Best number to reach you" /></label>
+            <label><span>PHONE</span><input className={fieldClass} type="tel" required minLength={7} autoComplete="tel" value={answers.phone} onChange={(e) => update("phone", e.target.value)} placeholder="You will sign in to your portal with this number" /></label>
           </div>
 
           <div className="form-section-title"><span>02</span><h2>THE PROJECT</h2></div>

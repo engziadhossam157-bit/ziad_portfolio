@@ -13,6 +13,7 @@ const PublicSection = lazy(() => import("./pages/PublicSection"));
 const Projects = lazy(() => import("./pages/Projects"));
 const ProjectDetail = lazy(() => import("./pages/ProjectDetail"));
 const Login = lazy(() => import("./pages/Login"));
+const AdminLogin = lazy(() => import("./pages/AdminLogin"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 const Portal = lazy(() => import("./pages/Portal"));
 const Admin = lazy(() => import("./pages/Portal").then((m) => ({ default: m.Admin })));
@@ -69,6 +70,7 @@ function Router() {
     <Route path="/portal/conversations" component={PortalMessages} />
     <Route path="/portal/notifications" component={() => <NotificationsPage />} />
     <Route path="/portal/profile" component={PortalProfile} />
+    <Route path="/admin/login" component={AdminLogin} />
     <Route path="/admin" component={Admin} />
     <Route path="/admin/clients" component={AdminClients} />
     <Route path="/admin/clients/:id" component={AdminClientDetail} />

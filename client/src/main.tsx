@@ -12,12 +12,13 @@ const queryClient = new QueryClient();
 const redirectToLoginIfUnauthorized = (error: unknown) => {
   if (!(error instanceof TRPCClientError)) return;
   if (typeof window === "undefined") return;
-  if (window.location.pathname === "/login") return;
+  const path = window.location.pathname;
+  if (path === "/login" || path === "/admin/login") return;
 
   const isUnauthorized = error.message === UNAUTHED_ERR_MSG;
   if (!isUnauthorized) return;
 
-  window.location.href = "/login";
+  window.location.href = path.startsWith("/admin") ? "/admin/login" : "/login";
 };
 
 queryClient.getQueryCache().subscribe(event => {

@@ -1,6 +1,7 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
-import { COOKIE_NAME, ONE_YEAR_MS } from "@shared/const";
+import { COOKIE_NAME, ONE_YEAR_MS, samePhone } from "@shared/const";
+import { ENV } from "./_core/env";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { isGoogleLoginConfigured } from "./_core/google";
 import { hashPassword, verifyPassword } from "./_core/password";
@@ -9,7 +10,8 @@ import { systemRouter } from "./_core/systemRouter";
 import { adminProcedure, protectedProcedure, publicProcedure, router } from "./_core/trpc";
 import { notifyOwner } from "./_core/notification";
 import {
-  claimPendingAccount, createAgreement, createAttachment, createChangeRequest, createClientNote, createClientUser, createDeliverable,
+  hasAdminWithPassword, setAdminPassword, setUserPhone, touchSignIn,
+  createAgreement, createAttachment, createChangeRequest, createClientNote, createClientUser, createDeliverable,
   createExperience, createMeeting, createMeetingSlot, createMessage, createMilestone, createNotification,
   createProject, createProjectRequest, createService, createCertificate, createTestimonial, createSkill,
   createUserWithPassword, deleteClientNote, deleteCertificate, deleteDeliverable, deleteExperience, deleteMeetingSlot,
@@ -29,7 +31,23 @@ import {
 } from "./db";
 import { storagePut } from "./storage";
 
-const projectRequestInput = z.object({ name: z.string().min(2), email: z.string().email(), phone: z.string().optional(), company: z.string().optional(), projectName: z.string().min(2), projectType: z.string().min(2), description: z.string().min(20), requiredFeatures: z.string().optional(), budget: z.string().optional(), deadline: z.coerce.date().optional(), referenceUrls: z.string().optional() });
+const projectRequestInput = z.object({ name: z.string().min(2), email: z.string().email(), phone: z.string().min(7), company: z.string().optional(), projectName: z.string().min(2), projectType: z.string().min(2), description: z.string().min(20), requiredFeatures: z.string().optional(), budget: z.string().optional(), deadline: z.coerce.date().optional(), referenceUrls: z.string().optional() });
+
+// Sign-in throttle: 8 tries per 15 minutes per account. In-memory, so per server instance.
+// ponytail: per-instance counter; move to the database if brute force becomes a real concern.
+const attempts = new Map<string, number[]>();
+function throttle(key: string) {
+  const now = Date.now(), recent = (attempts.get(key) ?? []).filter(t => now - t < 15 * 60_000);
+  if (recent.length >= 8) throw new TRPCError({ code: "TOO_MANY_REQUESTS", message: "Too many sign-in attempts. Try again in 15 minutes." });
+  attempts.set(key, [...recent, now]);
+}
+
+/** A user row as the browser may see it: never the password hash or Google ID. */
+function publicUser<T extends { passwordHash?: string | null; googleId?: string | null } | null | undefined>(user: T) {
+  if (!user) return null;
+  const { passwordHash: _hash, googleId: _google, ...rest } = user;
+  return rest;
+}
 
 function slugify(input: string): string { return `${input.toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "")}-${Date.now().toString(36)}`; }
 
@@ -61,34 +79,46 @@ function decodeUpload(base64: string, maxBytes = 12 * 1024 * 1024) {
 export const appRouter = router({
   system: systemRouter,
   auth: router({
-    me: publicProcedure.query(opts => opts.ctx.user),
+    me: publicProcedure.query(opts => publicUser(opts.ctx.user)),
     googleEnabled: publicProcedure.query(() => isGoogleLoginConfigured()),
-    register: publicProcedure
+    // Admin and client sign-in are separate. There is no public sign-up: the owner sets the admin
+    // password once, and client accounts are created only when the admin accepts a project request.
+    adminSetupNeeded: publicProcedure.query(async () => !(await hasAdminWithPassword())),
+    adminSetup: publicProcedure
       .input(z.object({ name: z.string().min(2), email: z.string().email(), password: z.string().min(8) }))
       .mutation(async ({ input, ctx }) => {
-        const existing = await getUserByEmail(input.email);
-        if (existing) {
-          if (existing.passwordHash) throw new TRPCError({ code: "CONFLICT", message: "An account with this email already exists." });
-          // A pending account provisioned by an accepted project request (no password yet) — claim it.
-          const passwordHash = await hashPassword(input.password);
-          await claimPendingAccount(existing.id, { passwordHash, name: input.name });
-          await setSessionCookie(ctx, existing.id);
-          return getUserById(existing.id);
-        }
+        if (await hasAdminWithPassword()) throw new TRPCError({ code: "FORBIDDEN", message: "The admin account is already set up. Sign in instead." });
+        if (!ENV.ownerEmail) throw new TRPCError({ code: "PRECONDITION_FAILED", message: "OWNER_EMAIL is not set on the server." });
+        if (input.email.toLowerCase() !== ENV.ownerEmail) throw new TRPCError({ code: "FORBIDDEN", message: "Only the site owner's email can set up the admin account." });
         const passwordHash = await hashPassword(input.password);
-        const userId = await createUserWithPassword({ email: input.email, passwordHash, name: input.name });
+        const existing = await getUserByEmail(input.email);
+        const userId = existing ? existing.id : await createUserWithPassword({ email: input.email, passwordHash, name: input.name });
+        await setAdminPassword(userId, { passwordHash, name: input.name });
         await setSessionCookie(ctx, userId);
-        return getUserById(userId);
+        return publicUser(await getUserById(userId));
       }),
-    login: publicProcedure
+    adminLogin: publicProcedure
       .input(z.object({ email: z.string().email(), password: z.string().min(1) }))
       .mutation(async ({ input, ctx }) => {
+        throttle(`admin:${input.email.toLowerCase()}`);
         const user = await getUserByEmail(input.email);
-        if (!user || !user.passwordHash) throw new TRPCError({ code: "UNAUTHORIZED", message: "Invalid email or password." });
-        const valid = await verifyPassword(input.password, user.passwordHash);
-        if (!valid) throw new TRPCError({ code: "UNAUTHORIZED", message: "Invalid email or password." });
+        const valid = !!user?.passwordHash && user.role === "admin" && (await verifyPassword(input.password, user.passwordHash));
+        if (!user || !valid) throw new TRPCError({ code: "UNAUTHORIZED", message: "Invalid email or password." });
         await setSessionCookie(ctx, user.id);
-        return user;
+        await touchSignIn(user.id);
+        return publicUser(user);
+      }),
+    clientLogin: publicProcedure
+      .input(z.object({ email: z.string().email(), phone: z.string().min(7) }))
+      .mutation(async ({ input, ctx }) => {
+        throttle(`client:${input.email.toLowerCase()}`);
+        const user = await getUserByEmail(input.email);
+        if (!user || user.role !== "user" || user.status === "inactive" || !samePhone(user.phone, input.phone)) {
+          throw new TRPCError({ code: "UNAUTHORIZED", message: "No approved project matches this email and phone. If you sent a project request, you can sign in once it is approved." });
+        }
+        await setSessionCookie(ctx, user.id);
+        await touchSignIn(user.id);
+        return publicUser(user);
       }),
     logout: publicProcedure.mutation(({ ctx }) => { const cookieOptions = getSessionCookieOptions(ctx.req); ctx.res.clearCookie(COOKIE_NAME, { ...cookieOptions, maxAge: -1 }); return { success: true } as const; }),
   }),
@@ -129,13 +159,17 @@ export const appRouter = router({
       let clientId = request.userId ?? undefined;
       if (!clientId) {
         const existing = await getUserByEmail(request.email);
+        if (existing?.role === "admin") throw new TRPCError({ code: "BAD_REQUEST", message: "This request uses the admin email. Clients need their own email." });
         clientId = existing ? existing.id : await createClientUser({ email: request.email, name: request.name, phone: request.phone, company: request.company });
       }
+      // The client signs in with the request's email and phone, so make sure the account has that phone.
+      const client = await getUserById(clientId);
+      if (request.phone && !samePhone(client?.phone, request.phone)) await setUserPhone(clientId, request.phone);
       const projectId = await createProject({ title: request.projectName, slug: slugify(request.projectName), description: request.description, category: request.projectType, year: new Date().getFullYear(), clientId, status: "planning", isPublic: false, deadline: request.deadline ?? null });
       await createAgreement({ projectId, clientId, status: "draft" });
       await updateRequestStatus(request.id, "accepted");
       await logProjectActivity(projectId, null, "created", "Project created from accepted request.");
-      await createNotification({ userId: clientId, type: "request", title: "Your project was accepted", body: `“${request.projectName}” is now set up in your client portal.`, href: `/portal/projects/${projectId}` });
+      await createNotification({ userId: clientId, type: "request", title: "Your project was accepted", body: `“${request.projectName}” is now set up in your client portal. Sign in with ${request.email} and the phone number from your request.`, href: `/portal/projects/${projectId}` });
       return { success: true, projectId, clientId };
     }),
   }),

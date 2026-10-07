@@ -23,3 +23,14 @@ export function safeNextPath(next: string | null | undefined): string | null {
     return null;
   }
 }
+
+/**
+ * Phone numbers are typed many ways (+20 102 082 4464, 01020824464, 00201020824464).
+ * Compare the last 10 digits, which is the national number for Egyptian mobiles.
+ */
+export function samePhone(a: string | null | undefined, b: string | null | undefined): boolean {
+  const digits = (s: string | null | undefined) => (s ?? "").replace(/\D/g, "");
+  const x = digits(a), y = digits(b);
+  if (x.length < 7 || y.length < 7) return false;
+  return x.slice(-10) === y.slice(-10);
+}

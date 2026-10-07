@@ -31,17 +31,17 @@ export default function DashboardShell({ children, admin = false }: { children: 
   const portalNotifications = trpc.portal.notifications.useQuery(undefined, { enabled: !loading && !!user && !admin });
   useEffect(() => {
     if (loading) return;
-    if (!user) navigate(`/login?next=${encodeURIComponent(location)}`);
+    // Each area has its own sign-in, and each role stays in its own area.
+    if (!user) navigate(admin ? "/admin/login" : `/login?next=${encodeURIComponent(location)}`);
     else if (admin && user.role !== "admin") navigate("/portal");
+    else if (!admin && user.role === "admin") navigate("/admin");
   }, [admin, loading, location, navigate, user]);
 
-  // Admins may open the client portal (the public "Client portal" link lands there); portal data is
-  // scoped to the signed-in user, so they see their own client view plus a way back to /admin.
-  if (loading || !user || (admin && user.role !== "admin")) {
+  if (loading || !user || admin !== (user.role === "admin")) {
     return <main className="system-page centered-state"><p className="section-kicker">AUTHORIZING WORKSPACE</p><p>Checking your session and access role…</p></main>;
   }
 
-  const groups = admin ? adminNav : user.role === "admin" ? [...clientNav, { label: "ADMIN", items: [["ADMIN DASHBOARD", "/admin", FolderKanban]] } satisfies NavGroup] : clientNav;
+  const groups = admin ? adminNav : clientNav;
   const unreadCount = (admin ? adminNotifications.data : portalNotifications.data)?.filter((n) => !n.isRead).length ?? 0;
 
   return <div className="dashboard-shell">

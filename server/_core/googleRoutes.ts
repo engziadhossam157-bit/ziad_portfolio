@@ -1,7 +1,8 @@
 import { OAUTH_STATE_COOKIE, COOKIE_NAME, ONE_YEAR_MS } from "@shared/const";
 import { parse as parseCookieHeader } from "cookie";
 import type { Express, Request, Response } from "express";
-import { upsertGoogleUser } from "../db";
+import { getUserByEmail, upsertGoogleUser } from "../db";
+import { ENV } from "./env";
 import { getSessionCookieOptions } from "./cookies";
 import {
   buildGoogleAuthUrl,
@@ -65,6 +66,14 @@ export function registerGoogleAuthRoutes(app: Express) {
         return;
       }
 
+      // Google sign-in is for the admin only; clients sign in with email and phone.
+      const existing = await getUserByEmail(userInfo.email);
+      const isOwner = !!ENV.ownerEmail && userInfo.email.toLowerCase() === ENV.ownerEmail;
+      if (!isOwner && existing?.role !== "admin") {
+        res.redirect(302, "/admin/login?error=google");
+        return;
+      }
+
       const userId = await upsertGoogleUser({
         email: userInfo.email,
         googleId: userInfo.sub,
@@ -75,7 +84,7 @@ export function registerGoogleAuthRoutes(app: Express) {
       const cookieOptions = getSessionCookieOptions(req);
       res.cookie(COOKIE_NAME, sessionToken, { ...cookieOptions, maxAge: ONE_YEAR_MS });
 
-      res.redirect(302, "/");
+      res.redirect(302, "/admin");
     } catch (error) {
       console.error("[GoogleAuth] Callback failed", error);
       res.status(500).json({ error: "Google login failed" });
