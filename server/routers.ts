@@ -10,7 +10,7 @@ import { systemRouter } from "./_core/systemRouter";
 import { adminProcedure, protectedProcedure, publicProcedure, router } from "./_core/trpc";
 import { notifyOwner } from "./_core/notification";
 import {
-  hasAdminWithPassword, setAdminPassword, setUserPhone, touchSignIn,
+  hasAdminWithPassword, linkRequestToUser, setAdminPassword, setUserPhone, touchSignIn,
   createAgreement, createAttachment, createChangeRequest, createClientNote, createClientUser, createDeliverable,
   createExperience, createMeeting, createMeetingSlot, createMessage, createMilestone, createNotification,
   createProject, createProjectRequest, createService, createCertificate, createTestimonial, createSkill,
@@ -147,7 +147,7 @@ export const appRouter = router({
       }),
   }),
   requests: router({
-    create: publicProcedure.input(projectRequestInput).mutation(async ({ input, ctx }) => { const requestId = await createProjectRequest({ ...input, userId: ctx.user?.id ?? null }); await notifyAdmins({ type: "request", title: "New project request", body: `${input.name} submitted “${input.projectName}” (${input.projectType}).`, href: "/admin/requests" }); return { success: true, requestId }; }),
+    create: publicProcedure.input(projectRequestInput).mutation(async ({ input, ctx }) => { const requestId = await createProjectRequest({ ...input, userId: ctx.user?.role === "user" ? ctx.user.id : null }); await notifyAdmins({ type: "request", title: "New project request", body: `${input.name} submitted “${input.projectName}” (${input.projectType}).`, href: "/admin/requests" }); return { success: true, requestId }; }),
     uploadPublicAttachment: publicProcedure.input(z.object({ requestId: z.number(), filename: z.string().min(1), mimeType: z.string().min(1), base64: z.string().min(1) })).mutation(async ({ input }) => { const buffer = decodeUpload(input.base64); const safeName = input.filename.replace(/[^a-zA-Z0-9._-]/g, "-"); const { key, url } = await storagePut(`public-request-${input.requestId}/${Date.now()}-${safeName}`, buffer, input.mimeType); await createAttachment({ requestId: input.requestId, filename: input.filename, mimeType: input.mimeType, size: buffer.byteLength, storageKey: key, url }); return { key, url }; }),
     mine: protectedProcedure.query(({ ctx }) => getRequestsForUser(ctx.user.id)),
     adminList: adminProcedure.query(() => getRequestsForAdmin()),
@@ -156,18 +156,17 @@ export const appRouter = router({
       const requests = await getRequestsForAdmin();
       const request = requests.find(r => r.id === input.id);
       if (!request) throw new TRPCError({ code: "NOT_FOUND", message: "Request not found." });
-      let clientId = request.userId ?? undefined;
-      if (!clientId) {
-        const existing = await getUserByEmail(request.email);
-        if (existing?.role === "admin") throw new TRPCError({ code: "BAD_REQUEST", message: "This request uses the admin email. Clients need their own email." });
-        clientId = existing ? existing.id : await createClientUser({ email: request.email, name: request.name, phone: request.phone, company: request.company });
-      }
+      // The client is always the person named in the request (its email), never an admin account.
+      const existing = await getUserByEmail(request.email);
+      if (existing?.role === "admin") throw new TRPCError({ code: "BAD_REQUEST", message: "This request uses the admin email. Clients need their own email." });
+      const clientId = existing ? existing.id : await createClientUser({ email: request.email, name: request.name, phone: request.phone, company: request.company });
       // The client signs in with the request's email and phone, so make sure the account has that phone.
       const client = await getUserById(clientId);
       if (request.phone && !samePhone(client?.phone, request.phone)) await setUserPhone(clientId, request.phone);
       const projectId = await createProject({ title: request.projectName, slug: slugify(request.projectName), description: request.description, category: request.projectType, year: new Date().getFullYear(), clientId, status: "planning", isPublic: false, deadline: request.deadline ?? null });
       await createAgreement({ projectId, clientId, status: "draft" });
       await updateRequestStatus(request.id, "accepted");
+      await linkRequestToUser(request.id, clientId);
       await logProjectActivity(projectId, null, "created", "Project created from accepted request.");
       await createNotification({ userId: clientId, type: "request", title: "Your project was accepted", body: `“${request.projectName}” is now set up in your client portal. Sign in with ${request.email} and the phone number from your request.`, href: `/portal/projects/${projectId}` });
       return { success: true, projectId, clientId };
