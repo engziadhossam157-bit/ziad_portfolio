@@ -66,7 +66,23 @@ const gymproShot = (name: string, caption: string, alt: string): ProjectShot => 
   caption,
 });
 
-const thmarbleShot =(name: string, caption: string, alt: string): ProjectShot => ({
+const clinicShot = (name: string, caption: string, alt: string): ProjectShot => ({
+  src: `/images/projects/clinic-erp/${name}-1600.webp`,
+  width: 1600,
+  height: 1000,
+  alt,
+  caption,
+});
+
+const pharmaShot = (name: string, caption: string, alt: string): ProjectShot => ({
+  src: `/images/projects/pharmacare/${name}-1600.webp`,
+  width: 1600,
+  height: 1000,
+  alt,
+  caption,
+});
+
+const thmarbleShot = (name: string, caption: string, alt: string): ProjectShot => ({
   src: `/images/projects/thmarble/${name}-1600.webp`,
   width: 1600,
   height: 1000,
@@ -162,6 +178,32 @@ export const PROJECTS: PortfolioProject[] = [
     tint: "sand",
   },
   {
+    slug: "pharmacare",
+    title: "PharmaCare Pro",
+    category: "Desktop App",
+    type: "Pharmacy Management System (Demo)",
+    role: "Desktop Application Developer",
+    platform: "Electron.js",
+    summary: "A desktop demo of a pharmacy management system: medicine catalog, point of sale with VAT receipts, expiry and low-stock alerts, and staff shifts.",
+    description: [
+      "PharmaCare Pro is a desktop demo of a pharmacy management system, built with React and Tailwind CSS and packaged for Windows with Electron. It runs offline and keeps its data on the device.",
+      "Pharmacists browse the medicine catalog as cards or a table, filter by category and stock level, and restock in one click. The point of sale builds a bill with discounts and 14% VAT and prints a tax receipt. An alerts center flags expired batches, batches expiring within 30 days, and low stock, and the settings hold the branch details, tax rate, and a JSON backup.",
+    ],
+    technologies: ["Electron.js", "React.js", "Tailwind CSS", "JavaScript", "Local storage"],
+    areas: ["Desktop application development", "Electron.js development", "Frontend development", "Point of sale", "Inventory and expiry tracking", "Receipt generation", "Offline data storage", "Desktop application packaging"],
+    shots: [
+      pharmaShot("dashboard", "Dashboard", "PharmaCare dashboard with active units, low stock, expiring batches and today's revenue, stock by therapeutic class and recent sales"),
+      pharmaShot("pos", "Point of sale", "Point of sale with medicine cards and a bill of five items with customer details, credit card payment, VAT and grand total"),
+      pharmaShot("receipt", "Tax receipt", "Printed tax receipt with invoice number, customer, items, VAT and a barcode"),
+      pharmaShot("inventory", "Medicine catalog", "Medicine catalog as cards with category, stock status, shelf, price and expiry date"),
+      pharmaShot("inventory-table", "Catalog table", "Medicine catalog as a table with stock units, shelf, price, expiry and restock actions"),
+      pharmaShot("expiry", "Expiry and stock alerts", "Alerts center listing an expired batch, batches expiring soon and low stock items with reorder actions"),
+      pharmaShot("settings", "Settings and backup", "Settings for branch name, address, VAT rate and license, with storage diagnostics and a JSON backup"),
+    ],
+    ogImage: "/images/projects/pharmacare/og.jpg",
+    tint: "sand",
+  },
+  {
     slug: "tei-workshop-erp",
     title: "TEI Workshop ERP",
     category: "ERP",
@@ -186,6 +228,33 @@ export const PROJECTS: PortfolioProject[] = [
     ],
     ogImage: "/images/projects/tei-workshop-erp/og.jpg",
     featured: true,
+  },
+  {
+    slug: "clinic-erp",
+    title: "Clinic ERP",
+    category: "ERP",
+    type: "Clinic Accounting & Operations System",
+    role: "Full-Stack Developer",
+    platform: "Electron.js / Node.js",
+    summary: "An offline ERP for a multi-clinic medical center: patient receipts and installments, doctor fees, expenses, stock, a daily treasury close, and profit per clinic and doctor.",
+    description: [
+      "Clinic ERP runs the money side of a multi-clinic medical center from one PC. It is an Express and SQLite application packaged as a Windows desktop app with Electron, with an Arabic, right-to-left interface that works fully offline.",
+      "Receptionists create a receipt for every visit, take partial payments, and find patients by phone. Managers record expenses (direct to a clinic, or general and shared by each clinic's collection), doctor fixed fees, and stock issues that book themselves as expenses. They close the treasury each day and read net profit per clinic, per doctor, and per partner. Every rule that protects the totals runs on the server, and every change is written to an audit log.",
+    ],
+    technologies: ["Node.js", "Express.js", "SQLite", "Electron.js", "JavaScript", "HTML/CSS"],
+    areas: ["Full-stack development", "ERP system architecture", "Accounting and business logic", "Authentication and role-based access", "REST API development", "Database design", "Reports and dashboards", "Audit logging", "Right-to-left Arabic UI", "Desktop application packaging"],
+    shots: [
+      clinicShot("dashboard", "Dashboard", "Clinic ERP dashboard with collected, expenses, net profit and patient balances for the period, and a breakdown per clinic"),
+      clinicShot("new-receipt", "New receipt", "New receipt form for a dental visit with total, discount, amount paid now, and the net and remaining balance"),
+      clinicShot("receipts-log", "Receipts log", "Receipts log with patient, clinic, net, paid and remaining amounts, and actions for WhatsApp, payments, edit and delete"),
+      clinicShot("payments", "Receipt payments", "Payments drawer for one receipt showing two installments and the remaining balance"),
+      clinicShot("patients", "Patients", "Patients list with phone, number of receipts and the amount each patient still owes"),
+      clinicShot("treasury", "Treasury", "Daily treasury with today's collections, expenses and net, collections by payment method and by employee, and the log of closed days"),
+      clinicShot("stock", "Stock", "Stock screen with new item and stock move forms, and item balances with reorder warnings"),
+      clinicShot("reports", "Period report", "Period report with income, expenses, doctor fixed fees and net, above the detailed income list"),
+      clinicShot("dashboard-dark", "Dark mode", "Clinic ERP dashboard in dark mode"),
+    ],
+    ogImage: "/images/projects/clinic-erp/og.jpg",
   },
   {
     slug: "trivalue",
@@ -277,7 +346,7 @@ export const SERVICES: PortfolioService[] = [
     summary: "Desktop apps built with Electron and Node.js, with local data storage and installable builds.",
     includes: ["Electron.js development", "Local data storage", "User interface development", "Application packaging"],
     technologies: ["Electron.js", "Node.js", "JavaScript"],
-    projects: ["monthly-tracker", "gympro"],
+    projects: ["monthly-tracker", "gympro", "pharmacare", "clinic-erp"],
   },
 ];
 
