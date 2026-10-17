@@ -58,7 +58,15 @@ const teiShot = (name: string, height: number, caption: string, alt: string): Pr
   caption,
 });
 
-const thmarbleShot = (name: string, caption: string, alt: string): ProjectShot => ({
+const gymproShot = (name: string, caption: string, alt: string): ProjectShot => ({
+  src: `/images/projects/gympro/${name}-1600.webp`,
+  width: 1600,
+  height: 1000,
+  alt,
+  caption,
+});
+
+const thmarbleShot =(name: string, caption: string, alt: string): ProjectShot => ({
   src: `/images/projects/thmarble/${name}-1600.webp`,
   width: 1600,
   height: 1000,
@@ -125,6 +133,33 @@ export const PROJECTS: PortfolioProject[] = [
     ],
     ogImage: "/images/projects/monthly-tracker/og.jpg",
     featured: true,
+  },
+  {
+    slug: "gympro",
+    title: "GymPro",
+    category: "Desktop App",
+    type: "Gym Management System",
+    role: "Desktop Application Developer",
+    platform: "Electron.js",
+    summary: "An offline desktop system for running a gym front desk: member registration, subscriptions, check-in at the door, and a cafeteria point of sale.",
+    description: [
+      "GymPro is an Arabic, right-to-left desktop application that runs a gym's front desk from one screen. It is built with Electron.js and React, and keeps all its data in a local SQLite database, so it works without an internet connection.",
+      "Staff register members with a webcam photo and an auto-generated member code, sell subscription plans with partial payments, and check members in by code or phone number. The gate flags expired subscriptions and unpaid balances before entry. A cafeteria point of sale tracks stock, and the dashboard shows today's attendance, active subscriptions, and sales.",
+    ],
+    technologies: ["Electron.js", "React.js", "Node.js", "SQLite", "Tailwind CSS", "JavaScript"],
+    areas: ["Desktop application development", "Electron.js development", "Local database design", "Member and subscription management", "Attendance tracking", "Point of sale and stock", "Webcam integration", "Right-to-left Arabic UI", "Desktop application packaging"],
+    shots: [
+      gymproShot("dashboard", "Dashboard", "GymPro dashboard with today's check-ins, active subscriptions, weekly renewals and cafeteria sales, above today's attendance log"),
+      gymproShot("checkin", "Check-in gate", "Check-in gate after searching a member code, showing an active subscription and the button to record entry, beside the live attendance log"),
+      gymproShot("checkin-due", "Balance due at the gate", "Check-in gate warning that the member still owes part of the subscription fee"),
+      gymproShot("register", "New member", "New member form with name, phone, emergency contact and gender, the generated member code, and the live camera panel for the member photo"),
+      gymproShot("members", "Members directory", "Members directory with filters for active, expired and members with balances due, and actions to view, edit and renew"),
+      gymproShot("member-profile", "Member profile", "Member profile with phone, plan, end date, remaining balance and notes"),
+      gymproShot("renew", "Renew subscription", "Renewal dialog with the chosen plan's duration and price, the amount paid and the remaining balance"),
+      gymproShot("cafeteria", "Cafeteria point of sale", "Cafeteria point of sale with product cards, stock counts and a cart totaling 135 EGP"),
+    ],
+    ogImage: "/images/projects/gympro/og.jpg",
+    tint: "sand",
   },
   {
     slug: "tei-workshop-erp",
@@ -242,7 +277,7 @@ export const SERVICES: PortfolioService[] = [
     summary: "Desktop apps built with Electron and Node.js, with local data storage and installable builds.",
     includes: ["Electron.js development", "Local data storage", "User interface development", "Application packaging"],
     technologies: ["Electron.js", "Node.js", "JavaScript"],
-    projects: ["monthly-tracker"],
+    projects: ["monthly-tracker", "gympro"],
   },
 ];
 
