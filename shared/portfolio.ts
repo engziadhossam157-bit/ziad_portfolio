@@ -153,7 +153,7 @@ export const PROJECTS: PortfolioProject[] = [
   {
     slug: "gympro",
     title: "GymPro",
-    category: "Desktop App",
+    category: "ERP",
     type: "Gym Management System",
     role: "Desktop Application Developer",
     platform: "Electron.js",
@@ -180,7 +180,7 @@ export const PROJECTS: PortfolioProject[] = [
   {
     slug: "pharmacare",
     title: "PharmaCare Pro",
-    category: "Desktop App",
+    category: "ERP",
     type: "Pharmacy Management System (Demo)",
     role: "Desktop Application Developer",
     platform: "Electron.js",
