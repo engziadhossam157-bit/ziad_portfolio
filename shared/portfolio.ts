@@ -82,6 +82,14 @@ const pharmaShot = (name: string, caption: string, alt: string): ProjectShot => 
   caption,
 });
 
+const rmtradeShot = (name: string, caption: string, alt: string): ProjectShot => ({
+  src: `/images/projects/rmtrade/${name}-1600.webp`,
+  width: 1600,
+  height: 1000,
+  alt,
+  caption,
+});
+
 const thmarbleShot = (name: string, caption: string, alt: string): ProjectShot => ({
   src: `/images/projects/thmarble/${name}-1600.webp`,
   width: 1600,
@@ -276,15 +284,28 @@ export const PROJECTS: PortfolioProject[] = [
     slug: "rmtrade",
     title: "RMTrade",
     category: "E-commerce",
-    type: "E-commerce Website",
+    type: "Product Catalog & Quote Website",
     platform: "WordPress / WooCommerce",
-    summary: "An online product catalog and store built on WordPress and WooCommerce.",
+    summary: "A bilingual product catalog for a medical equipment importer, where clinics browse X-ray tables and eye-diagnostic lenses and request a quote.",
     description: [
-      "RMTrade is an e-commerce platform developed using WordPress and WooCommerce, providing the business with an online product catalog and digital shopping experience.",
+      "RM Trade imports veterinary X-ray tables and ophthalmology instruments for clinics in Egypt. The site is a catalog built on WordPress and WooCommerce with a custom theme: buyers browse by specialty, read each product's specifications, and request a quote by form or WhatsApp instead of checking out.",
+      "Every page works in English and Arabic with a full right-to-left layout. The store owner manages products, photos, categories and Arabic names from a front-end dashboard instead of wp-admin, and every quote request is stored so none are lost.",
     ],
     technologies: ["WordPress", "WooCommerce", "PHP", "HTML", "CSS", "JavaScript"],
-    areas: ["WordPress development", "WooCommerce", "Product catalog", "Product management", "Shopping cart", "Order management", "Store management", "Responsive UI", "Website customization"],
-    shots: [],
+    areas: ["WordPress development", "Custom WordPress theme", "WooCommerce", "Product catalog", "Quote request forms", "English and Arabic (RTL)", "Owner dashboard", "Product management", "Responsive UI"],
+    shots: [
+      rmtradeShot("home", "Home page", "RM Trade home page with the headline Veterinary X-ray and ophthalmology, quote and browse buttons, and an I.P.S. X-ray table"),
+      rmtradeShot("specialty", "Shop by specialty", "Two specialty cards for veterinary X-ray (14 products) and ophthalmology (8 products), above the catalog tabs"),
+      rmtradeShot("products", "Product catalog", "Catalog of 22 products with category filters, search, stock badges and a request a quote button on each card"),
+      rmtradeShot("product", "Product page", "HF 400 II Pro X-ray table page with category and stock badges, quote and WhatsApp buttons, and its specifications"),
+      rmtradeShot("lens", "Lens specifications", "Three mirror gonio lens page with a specifications table for material, sterilization, finish and coating"),
+      rmtradeShot("quote", "Quote request", "Quote request form for the HF 400 II Pro with a live preview of what RM Trade receives and a WhatsApp alternative"),
+      rmtradeShot("home-ar", "Arabic home page", "The home page in Arabic with a right-to-left layout"),
+      rmtradeShot("product-ar", "Arabic product page", "The HF 400 II Pro product page in Arabic with a right-to-left layout"),
+      rmtradeShot("dashboard", "Owner dashboard", "Owner dashboard listing all 22 products with category, status, update date and edit, view and delete actions"),
+      rmtradeShot("dashboard-editor", "Product editor", "Dashboard product editor with photo upload, English and Arabic names, category, visibility and homepage spotlight"),
+    ],
+    ogImage: "/images/projects/rmtrade/og.jpg",
   },
   {
     slug: "thmarble",
