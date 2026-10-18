@@ -176,6 +176,7 @@ export const PROJECTS: PortfolioProject[] = [
     ],
     ogImage: "/images/projects/gympro/og.jpg",
     tint: "sand",
+    featured: true,
   },
   {
     slug: "pharmacare",
@@ -202,6 +203,7 @@ export const PROJECTS: PortfolioProject[] = [
     ],
     ogImage: "/images/projects/pharmacare/og.jpg",
     tint: "sand",
+    featured: true,
   },
   {
     slug: "tei-workshop-erp",
@@ -269,7 +271,6 @@ export const PROJECTS: PortfolioProject[] = [
     technologies: ["WordPress", "WooCommerce", "PHP", "HTML", "CSS", "JavaScript"],
     areas: ["WordPress development", "WooCommerce development", "Product management", "Product categories", "Shopping cart", "Order management", "Store administration", "Website customization", "Responsive design"],
     shots: [],
-    featured: true,
   },
   {
     slug: "rmtrade",
