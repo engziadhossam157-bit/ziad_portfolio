@@ -705,6 +705,9 @@ h1,h2,h3,p { margin-top: 0; } h1 { font-size: clamp(4.8rem,10vw,10.4rem); line-h
 .request-form .file-drop > svg { color: var(--accent); }
 .request-form .file-drop strong { font-size: .98rem; }
 .request-form .file-drop p { margin: 0; color: var(--muted); font-size: .85rem; }
+.request-form .file-drop .file-note { color: var(--error); }
+.dashboard-shell .request-row .request-files { display: flex; flex-wrap: wrap; align-items: center; gap: .35rem .9rem; }
+.dashboard-shell .request-row .request-files a { color: var(--accent); text-decoration: underline; text-underline-offset: 2px; word-break: break-all; }
 .request-form .file-drop .file-status-list { position: relative; z-index: 2; width: 100%; margin-top: .6rem; text-align: left; }
 .request-submit { display: flex; flex-wrap: wrap; align-items: center; gap: 1.4rem; padding-top: .4rem; }
 .request-note { margin: 0; color: var(--muted); font-size: .88rem; }

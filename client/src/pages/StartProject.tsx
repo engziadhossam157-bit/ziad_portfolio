@@ -1,8 +1,10 @@
 import { FormEvent, useEffect, useRef, useState } from "react";
 import { Link } from "wouter";
 import { ArrowLeft, ArrowUpRight, CheckCircle2, Code2, Globe, LayoutTemplate, Loader2, Monitor, Paperclip, ShoppingBag, Sparkles } from "lucide-react";
+import { upload as blobUpload } from "@vercel/blob/client";
 import { trpc } from "@/lib/trpc";
 import { CONTACT_EMAIL } from "@/lib/site";
+import { REQUEST_FILE_ACCEPT, REQUEST_FILE_MAX_BYTES, REQUEST_FILE_MAX_COUNT, requestFilePrefix } from "@shared/requestFiles";
 
 const fieldClass = "form-input";
 const Optional = () => <small className="field-optional">OPTIONAL</small>;
@@ -31,15 +33,26 @@ export default function StartProject() {
   const [otherProjectType, setOtherProjectType] = useState("");
   const [otherBudget, setOtherBudget] = useState("");
   const [files, setFiles] = useState<File[]>([]);
+  const [fileNote, setFileNote] = useState("");
+  // Oversized files are left out up front instead of failing after the request is sent.
+  const pickFiles = (picked: FileList | null) => {
+    const all = Array.from(picked ?? []);
+    const tooBig = all.filter((file) => file.size > REQUEST_FILE_MAX_BYTES);
+    const kept = all.filter((file) => file.size <= REQUEST_FILE_MAX_BYTES).slice(0, REQUEST_FILE_MAX_COUNT);
+    setFiles(kept);
+    setFileNote(tooBig.length ? `${tooBig.map((file) => file.name).join(", ")} ${tooBig.length === 1 ? "is" : "are"} over 50 MB and ${tooBig.length === 1 ? "was" : "were"} left out.` : all.length > REQUEST_FILE_MAX_COUNT ? `Only the first ${REQUEST_FILE_MAX_COUNT} files were added.` : "");
+  };
   const [requestId, setRequestId] = useState<number>();
   const [uploadStates, setUploadStates] = useState<Record<string, "pending" | "uploaded" | "failed">>({});
   const errorRef = useRef<HTMLDivElement>(null);
-  const upload = trpc.requests.uploadPublicAttachment.useMutation();
+  const attach = trpc.requests.attachFile.useMutation();
+  // Files go straight from the browser to storage (not through the server), then get recorded on the request.
   const uploadFile = async (file: File, id: number) => {
     setUploadStates((current) => ({ ...current, [file.name]: "pending" }));
     try {
-      const base64 = await new Promise<string>((resolve, reject) => { const reader = new FileReader(); reader.onload = () => resolve(String(reader.result)); reader.onerror = reject; reader.readAsDataURL(file); });
-      await upload.mutateAsync({ requestId: id, filename: file.name, mimeType: file.type || "application/octet-stream", base64 });
+      const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "-");
+      const blob = await blobUpload(`${requestFilePrefix(id)}${safeName}`, file, { access: "public", handleUploadUrl: "/api/request-files", clientPayload: JSON.stringify({ requestId: id }), multipart: file.size > 8 * 1024 * 1024 });
+      await attach.mutateAsync({ requestId: id, url: blob.url, filename: file.name });
       setUploadStates((current) => ({ ...current, [file.name]: "uploaded" }));
       return true;
     } catch {
@@ -64,6 +77,7 @@ export default function StartProject() {
     if (results.every(Boolean)) setSubmitted(true);
   };
   const uploadsFailed = Object.values(uploadStates).includes("failed");
+  const uploading = Object.values(uploadStates).includes("pending");
   const today = new Date().toISOString().slice(0, 10);
   const descriptionLeft = Math.max(0, MIN_DESCRIPTION - answers.description.trim().length);
 
@@ -141,18 +155,19 @@ export default function StartProject() {
 
           <div className={`file-drop${files.length ? " has-files" : ""}`}>
             {/* The native file input covers the whole zone, so drag-and-drop works without extra code. */}
-            <input type="file" multiple accept="image/*,.pdf,.doc,.docx" disabled={!!requestId} onChange={(e) => setFiles(Array.from(e.target.files ?? []))} aria-label="Attach files" />
+            <input type="file" multiple accept={REQUEST_FILE_ACCEPT} disabled={!!requestId} onChange={(e) => pickFiles(e.target.files)} aria-label="Attach files" />
             <Paperclip size={22} aria-hidden="true" />
             <strong>Drop files here or click to browse</strong>
-            <p>PDFs, images, docs, and designs. They upload securely after you send the request.</p>
+            <p>PDFs, images, Word documents or ZIP files, up to 50 MB each. They upload after you send the request.</p>
+            {fileNote && <p className="file-note" role="status">{fileNote}</p>}
             {files.length > 0 && <div className="file-status-list">{files.map((file) => <div key={file.name}><span>{file.name}</span><span className="file-status-actions"><b className={uploadStates[file.name] ?? "pending"}>{uploadStates[file.name] ?? "ready"}</b>{requestId && uploadStates[file.name] === "failed" && <button type="button" className="file-retry" onClick={() => uploadFile(file, requestId)}>RETRY</button>}</span></div>)}</div>}
           </div>
 
           {create.error && <div className="form-error" role="alert" tabIndex={-1} ref={errorRef}><p>{create.error.message || "Your request could not be sent. Please check the form and try again."}</p></div>}
-          {requestId && uploadsFailed && <div className="form-error" role="alert" tabIndex={-1} ref={errorRef}><p>Your request was sent, but some files could not be uploaded. Retry the failed files below.</p><button type="button" className="outline-button" onClick={retryFailed} disabled={upload.isPending}>RETRY FAILED UPLOADS</button></div>}
+          {requestId && uploadsFailed && <div className="form-error" role="alert" tabIndex={-1} ref={errorRef}><p>Your request was sent, but some files could not be uploaded. Retry the failed files below.</p><button type="button" className="outline-button" onClick={retryFailed} disabled={uploading}>RETRY FAILED UPLOADS</button></div>}
           <div className="request-submit">
             {!requestId && <button className="button button-accent submit-button" type="submit" disabled={create.isPending}>{create.isPending ? <Loader2 className="spin" size={16} /> : <ArrowUpRight size={18} />} SEND PROJECT REQUEST</button>}
-            {requestId && !uploadsFailed && upload.isPending && <p className="form-status" role="status"><Loader2 className="spin" size={16} /> Uploading your files…</p>}
+            {requestId && !uploadsFailed && uploading && <p className="form-status" role="status"><Loader2 className="spin" size={16} /> Uploading your files…</p>}
             {!requestId && <p className="request-note">I'll reply by email with the next step.</p>}
           </div>
         </form>

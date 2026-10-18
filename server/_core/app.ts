@@ -2,6 +2,7 @@ import express from "express";
 import { createExpressMiddleware } from "@trpc/server/adapters/express";
 import { registerGoogleAuthRoutes } from "./googleRoutes";
 import { registerStorageProxy } from "./storageProxy";
+import { registerRequestFileUpload } from "./requestFiles";
 import { appRouter } from "../routers";
 import { createContext } from "./context";
 import { buildRobotsTxt, buildSitemapXml } from "./seo";
@@ -13,6 +14,7 @@ export function createApp() {
   app.use(express.json({ limit: "50mb" }));
   app.use(express.urlencoded({ limit: "50mb", extended: true }));
   registerStorageProxy(app);
+  registerRequestFileUpload(app);
   registerGoogleAuthRoutes(app);
   app.get("/robots.txt", (req, res) => {
     res.type("text/plain").send(buildRobotsTxt(req));

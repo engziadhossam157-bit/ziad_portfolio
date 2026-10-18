@@ -19,6 +19,10 @@ export const ENV = {
   googleClientId: process.env.GOOGLE_CLIENT_ID ?? "",
   googleClientSecret: process.env.GOOGLE_CLIENT_SECRET ?? "",
 
+  // Vercel Blob (file uploads / attachments). Vercel adds this when a Blob store is connected
+  // to the project; when it is set it wins over the S3 settings below.
+  blobReadWriteToken: process.env.BLOB_READ_WRITE_TOKEN ?? "",
+
   // AWS S3 (file uploads / attachments)
   awsRegion: process.env.AWS_REGION ?? "",
   awsS3Bucket: process.env.AWS_S3_BUCKET ?? "",

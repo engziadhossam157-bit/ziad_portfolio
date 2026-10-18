@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ArrowUpRight, CheckCircle2, Inbox, Loader2, MessageCircle } from "lucide-react";
+import { ArrowUpRight, CheckCircle2, Inbox, Loader2, MessageCircle, Paperclip } from "lucide-react";
 import { Link } from "wouter";
 import { trpc } from "@/lib/trpc";
 import Shell from "@/components/DashboardShell";
@@ -46,6 +46,7 @@ Sign in with your email (${a.email}) and this phone number.`;
           <span>{request.name} · {request.email}{request.phone ? ` · ${request.phone}` : " · no phone"}</span>
           <span>{request.projectType} · {request.description.slice(0, 90)}{request.description.length > 90 ? "…" : ""}</span>
           <span>{request.budget ? `Budget: ${request.budget}` : ""}{request.deadline ? ` · Due ${new Date(request.deadline).toLocaleDateString()}` : ""}{request.referenceUrls ? ` · Refs: ${request.referenceUrls}` : ""}</span>
+          {request.files.length > 0 && <span className="request-files"><Paperclip size={13} aria-hidden="true" />{request.files.map(file => <a key={file.id} href={file.url} target="_blank" rel="noreferrer">{file.filename}</a>)}</span>}
         </div>
         <div className="inline-edit">
           <span className={`status-pill ${request.status}`}>{request.status}</span>

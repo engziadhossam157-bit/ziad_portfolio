@@ -1,11 +1,14 @@
-// File storage backed by AWS S3.
-// Uploads happen server-side (buffer already in memory); downloads are served
-// through a short-lived presigned GET URL via the /storage/* proxy route so
-// the bucket itself never needs to be public.
+// File storage: Vercel Blob when BLOB_READ_WRITE_TOKEN is set, otherwise AWS S3.
+// Blob files are stored under an unguessable random suffix and returned as their own URL.
+// S3 uploads happen server-side; downloads are served through a short-lived presigned GET
+// URL via the /storage/* proxy route so the bucket itself never needs to be public.
 
 import { GetObjectCommand, PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import { put } from "@vercel/blob";
 import { ENV } from "./_core/env";
+
+export const blobConfigured = () => !!ENV.blobReadWriteToken;
 
 let _client: S3Client | null = null;
 
@@ -43,10 +46,20 @@ export async function storagePut(
   data: Buffer | Uint8Array | string,
   contentType = "application/octet-stream"
 ): Promise<{ key: string; url: string }> {
+  const body = typeof data === "string" ? Buffer.from(data) : data;
+
+  if (blobConfigured()) {
+    const blob = await put(normalizeKey(relKey), Buffer.from(body), {
+      access: "public",
+      addRandomSuffix: true,
+      contentType,
+      token: ENV.blobReadWriteToken,
+    });
+    return { key: blob.pathname, url: blob.url };
+  }
+
   const client = getClient();
   const key = appendHashSuffix(normalizeKey(relKey));
-
-  const body = typeof data === "string" ? Buffer.from(data) : data;
 
   await client.send(
     new PutObjectCommand({

@@ -20,7 +20,7 @@ import {
   getAboutProfile, getAdminUserIds, getAgreementByProject, getAgreementById, getAllAgreements, getAllCertificates,
   getAllChangeRequests, getAllClients, getAllDeliverables, getAllExperience, getAllMeetingSlots, getAllMeetings,
   getAllMessagesWithProject, getAllMilestones, getAllProjects, getAllPublicProjects, getAllServices, getAllSkills,
-  getAllTestimonials, getAttachmentsForProject, getAvailableMeetingSlots, getChangeRequestActivityForUser,
+  getAllTestimonials, getAttachmentsForProject, getAttachmentsForRequests, getAvailableMeetingSlots, getChangeRequestActivityForUser,
   getChangeRequestsForUser, getClientNotes, getDashboardCounts, getDeliverableById, getDeliverablesForProject,
   getMeetingSlotById, getMeetingsForUser, getMessagesForProject, getMessagesForUser, getMilestonesForProject,
   getNotificationsForUser, getProjectActivity, getProjectById, getProjectsForUser, getPublicExperience,
@@ -31,6 +31,9 @@ import {
   upsertAboutProfile,
 } from "./db";
 import { storagePut } from "./storage";
+import { head } from "@vercel/blob";
+import { requestOpenForFiles } from "./_core/requestFiles";
+import { REQUEST_FILE_MAX_COUNT, requestFilePrefix } from "@shared/requestFiles";
 
 const projectRequestInput = z.object({ name: z.string().min(2), email: z.string().email(), phone: z.string().min(7), company: z.string().optional(), projectName: z.string().min(2), projectType: z.string().min(2), description: z.string().min(20), requiredFeatures: z.string().optional(), budget: z.string().optional(), deadline: z.coerce.date().optional(), referenceUrls: z.string().optional(), fileNames: z.array(z.string().max(200)).max(20).optional() });
 
@@ -149,9 +152,21 @@ export const appRouter = router({
   }),
   requests: router({
     create: publicProcedure.input(projectRequestInput).mutation(async ({ input, ctx }) => { const { fileNames: _fileNames, ...request } = input; const requestId = await createProjectRequest({ ...request, userId: ctx.user?.role === "user" ? ctx.user.id : null }); const email = projectRequestEmail({ ...input, requestId }, ENV.appUrl); await notifyAdmins({ type: "request", title: "New project request", body: `${input.name} submitted “${input.projectName}” (${input.projectType}).`, href: "/admin/requests", email: { subject: email.subject, content: email.text, html: email.html, replyTo: input.email } }); return { success: true, requestId }; }),
-    uploadPublicAttachment: publicProcedure.input(z.object({ requestId: z.number(), filename: z.string().min(1), mimeType: z.string().min(1), base64: z.string().min(1) })).mutation(async ({ input }) => { const buffer = decodeUpload(input.base64); const safeName = input.filename.replace(/[^a-zA-Z0-9._-]/g, "-"); const { key, url } = await storagePut(`public-request-${input.requestId}/${Date.now()}-${safeName}`, buffer, input.mimeType); await createAttachment({ requestId: input.requestId, filename: input.filename, mimeType: input.mimeType, size: buffer.byteLength, storageKey: key, url }); return { key, url }; }),
+    // The browser uploads the file to Vercel Blob first (server/_core/requestFiles.ts); this records it
+    // on the request once the store confirms the file exists under that request's folder.
+    attachFile: publicProcedure.input(z.object({ requestId: z.number(), url: z.string().url(), filename: z.string().min(1).max(200) })).mutation(async ({ input }) => {
+      const open = await requestOpenForFiles(input.requestId);
+      if ("error" in open) throw new TRPCError({ code: "BAD_REQUEST", message: open.error });
+      const existing = await getAttachmentsForRequests([input.requestId]);
+      if (existing.length >= REQUEST_FILE_MAX_COUNT) throw new TRPCError({ code: "BAD_REQUEST", message: `A request can have at most ${REQUEST_FILE_MAX_COUNT} files.` });
+      const blob = await head(input.url, { token: ENV.blobReadWriteToken }).catch(() => null);
+      if (!blob || !blob.pathname.startsWith(requestFilePrefix(input.requestId))) throw new TRPCError({ code: "BAD_REQUEST", message: "Uploaded file not found." });
+      if (existing.some(a => a.storageKey === blob.pathname)) return { url: blob.url };
+      await createAttachment({ requestId: input.requestId, filename: input.filename, mimeType: blob.contentType || "application/octet-stream", size: blob.size, storageKey: blob.pathname, url: blob.url });
+      return { url: blob.url };
+    }),
     mine: protectedProcedure.query(({ ctx }) => getRequestsForUser(ctx.user.id)),
-    adminList: adminProcedure.query(() => getRequestsForAdmin()),
+    adminList: adminProcedure.query(async () => { const requests = await getRequestsForAdmin(); const files = await getAttachmentsForRequests(requests.map(r => r.id)); return requests.map(r => ({ ...r, files: files.filter(f => f.requestId === r.id).map(f => ({ id: f.id, filename: f.filename, url: f.url, size: f.size })) })); }),
     setStatus: adminProcedure.input(z.object({ id: z.number(), status: z.enum(["new", "reviewing", "accepted", "declined", "converted"]) })).mutation(({ input }) => updateRequestStatus(input.id, input.status)),
     accept: adminProcedure.input(z.object({ id: z.number() })).mutation(async ({ input }) => {
       const requests = await getRequestsForAdmin();
