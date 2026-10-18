@@ -17,7 +17,7 @@ import { ContactDetails } from "@/components/ContactDetails";
 
 const METRICS = [
   { value: "25", label: "Projects shipped" },
-  { value: "96%", label: "Client satisfaction" },
+  { value: "96%", label: "On-time delivery" },
   { value: "2", label: "Years building" },
 ];
 
