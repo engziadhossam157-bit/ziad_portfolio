@@ -9,6 +9,7 @@ import { createSessionToken } from "./_core/session";
 import { systemRouter } from "./_core/systemRouter";
 import { adminProcedure, protectedProcedure, publicProcedure, router } from "./_core/trpc";
 import { notifyOwner } from "./_core/notification";
+import { projectRequestEmail } from "./emails/projectRequestEmail";
 import {
   hasAdminWithPassword, linkRequestToUser, setAdminPassword, setUserPhone, touchSignIn,
   createAgreement, createAttachment, createChangeRequest, createClientNote, createClientUser, createDeliverable,
@@ -31,7 +32,7 @@ import {
 } from "./db";
 import { storagePut } from "./storage";
 
-const projectRequestInput = z.object({ name: z.string().min(2), email: z.string().email(), phone: z.string().min(7), company: z.string().optional(), projectName: z.string().min(2), projectType: z.string().min(2), description: z.string().min(20), requiredFeatures: z.string().optional(), budget: z.string().optional(), deadline: z.coerce.date().optional(), referenceUrls: z.string().optional() });
+const projectRequestInput = z.object({ name: z.string().min(2), email: z.string().email(), phone: z.string().min(7), company: z.string().optional(), projectName: z.string().min(2), projectType: z.string().min(2), description: z.string().min(20), requiredFeatures: z.string().optional(), budget: z.string().optional(), deadline: z.coerce.date().optional(), referenceUrls: z.string().optional(), fileNames: z.array(z.string().max(200)).max(20).optional() });
 
 // Sign-in throttle: 8 tries per 15 minutes per account. In-memory, so per server instance.
 // ponytail: per-instance counter; move to the database if brute force becomes a real concern.
@@ -57,10 +58,10 @@ async function setSessionCookie(ctx: { req: any; res: any }, userId: number) {
   ctx.res.cookie(COOKIE_NAME, sessionToken, { ...cookieOptions, maxAge: ONE_YEAR_MS });
 }
 
-async function notifyAdmins(input: { type: string; title: string; body: string; href?: string }) {
+async function notifyAdmins(input: { type: string; title: string; body: string; href?: string; email?: { subject?: string; content: string; html?: string; replyTo?: string } }) {
   const adminIds = await getAdminUserIds();
   await Promise.all(adminIds.map(userId => createNotification({ userId, type: input.type, title: input.title, body: input.body, href: input.href })));
-  await notifyOwner({ title: input.title, content: input.body });
+  await notifyOwner({ title: input.email?.subject ?? input.title, content: input.email?.content ?? input.body, html: input.email?.html, replyTo: input.email?.replyTo });
 }
 
 async function assertOwnsProject(userId: number, projectId: number) {
@@ -147,7 +148,7 @@ export const appRouter = router({
       }),
   }),
   requests: router({
-    create: publicProcedure.input(projectRequestInput).mutation(async ({ input, ctx }) => { const requestId = await createProjectRequest({ ...input, userId: ctx.user?.role === "user" ? ctx.user.id : null }); await notifyAdmins({ type: "request", title: "New project request", body: `${input.name} submitted “${input.projectName}” (${input.projectType}).`, href: "/admin/requests" }); return { success: true, requestId }; }),
+    create: publicProcedure.input(projectRequestInput).mutation(async ({ input, ctx }) => { const { fileNames: _fileNames, ...request } = input; const requestId = await createProjectRequest({ ...request, userId: ctx.user?.role === "user" ? ctx.user.id : null }); const email = projectRequestEmail({ ...input, requestId }, ENV.appUrl); await notifyAdmins({ type: "request", title: "New project request", body: `${input.name} submitted “${input.projectName}” (${input.projectType}).`, href: "/admin/requests", email: { subject: email.subject, content: email.text, html: email.html, replyTo: input.email } }); return { success: true, requestId }; }),
     uploadPublicAttachment: publicProcedure.input(z.object({ requestId: z.number(), filename: z.string().min(1), mimeType: z.string().min(1), base64: z.string().min(1) })).mutation(async ({ input }) => { const buffer = decodeUpload(input.base64); const safeName = input.filename.replace(/[^a-zA-Z0-9._-]/g, "-"); const { key, url } = await storagePut(`public-request-${input.requestId}/${Date.now()}-${safeName}`, buffer, input.mimeType); await createAttachment({ requestId: input.requestId, filename: input.filename, mimeType: input.mimeType, size: buffer.byteLength, storageKey: key, url }); return { key, url }; }),
     mine: protectedProcedure.query(({ ctx }) => getRequestsForUser(ctx.user.id)),
     adminList: adminProcedure.query(() => getRequestsForAdmin()),

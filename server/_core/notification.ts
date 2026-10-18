@@ -3,6 +3,9 @@ import { ENV } from "./env";
 export type NotificationPayload = {
   title: string;
   content: string;
+  /** Optional HTML body; `content` is still sent as the plain-text part. */
+  html?: string;
+  replyTo?: string;
 };
 
 const TITLE_MAX_LENGTH = 1200;
@@ -48,6 +51,8 @@ export async function notifyOwner(input: NotificationPayload): Promise<boolean> 
         to: ENV.notifyOwnerEmail,
         subject: title,
         text: content,
+        ...(isNonEmptyString(input.html) ? { html: input.html } : {}),
+        ...(isNonEmptyString(input.replyTo) ? { reply_to: input.replyTo.trim() } : {}),
       }),
     });
 

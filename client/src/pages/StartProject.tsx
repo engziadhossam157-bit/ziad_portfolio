@@ -55,7 +55,7 @@ export default function StartProject() {
     if (requestId) return;
     const projectType = answers.projectType === "Other" ? otherProjectType.trim() : answers.projectType;
     const budget = answers.budget === "Other" ? otherBudget.trim() : answers.budget;
-    create.mutate({ ...answers, projectType, budget, deadline: answers.deadline ? new Date(answers.deadline) : undefined });
+    create.mutate({ ...answers, projectType, budget, deadline: answers.deadline ? new Date(answers.deadline) : undefined, fileNames: files.map((file) => file.name) });
   };
   const retryFailed = async () => {
     if (!requestId) return;
