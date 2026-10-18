@@ -147,7 +147,8 @@ h1,h2,h3,p { margin-top: 0; } h1 { font-size: clamp(4.8rem,10vw,10.4rem); line-h
 .work-heading { margin-bottom: 3.5rem; } .work-heading .section-title { margin: 1rem 0 0; }
 .work-more { display: flex; justify-content: center; margin-top: 4rem; }
 .filter-row { display: flex; gap: .5rem; flex-wrap: wrap; margin-top: 2rem; } .filter-row button { cursor: pointer; min-height: 40px; border: 1px solid var(--line); border-radius: var(--radius-pill); background: transparent; color: var(--muted); font: .7rem 'DM Mono',monospace; padding: .6rem 1rem; transition: .18s; } .filter-row button:hover,.filter-row button.active { color: var(--accent-ink); background: var(--accent); border-color: var(--accent); }
-.project-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 4.5rem 1.4rem; } .project-grid:not(.is-even) > :nth-child(even) { margin-top: 7rem; } .project-grid.is-even { gap: 3.5rem 1.4rem; }
+/* Staggered grid: the right column is shifted down with `top` (not margin) so the offset doesn't grow each row and leave dead space under the left card; the bottom padding keeps the last shifted card clear of the next section. */
+.project-grid { --stagger: 5rem; display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 3.5rem 1.4rem; } .project-grid:not(.is-even) { padding-bottom: var(--stagger); } .project-grid:not(.is-even) > :nth-child(even) { position: relative; top: var(--stagger); }
 .project-card { --project-accent: var(--navy); } .project-card.tone-soft { --project-accent: var(--accent-soft); }
 .project-link { display: block; border-radius: var(--radius-card); } .project-link:focus-visible { outline-offset: 6px; }
 .project-visual { position: relative; aspect-ratio: 16 / 10; overflow: hidden; background: var(--surface-alt); border: 1px solid var(--line); border-radius: var(--radius-card); color: var(--project-accent); display: flex; align-items: center; justify-content: center; box-shadow: 0 1px 2px rgba(0,31,73,.05); transition: box-shadow .45s var(--ease-out); } .project-link:hover .project-visual { box-shadow: 0 10px 20px rgba(0,31,73,.1), 0 34px 64px rgba(0,31,73,.22); }
@@ -210,7 +211,7 @@ h1,h2,h3,p { margin-top: 0; } h1 { font-size: clamp(4.8rem,10vw,10.4rem); line-h
   .services-section,.work-section { padding: 5.5rem 1.25rem; }
   .section-title { font-size: clamp(2.7rem,12.5vw,6rem); margin-bottom: 2.5rem; }
   .service-row { grid-template-columns: 2.75rem minmax(0,1fr); gap: .4rem 1rem; align-items: start; min-height: 0; padding: 1.4rem 0; } .service-row .service-icon-chip { grid-row: span 2; width: 2.75rem; height: 2.75rem; } .service-row p { font-size: .88rem; }
-  .project-grid { grid-template-columns: 1fr; gap: 3rem; } .project-grid:not(.is-even) > :nth-child(even) { margin-top: 0; }
+  .project-grid { grid-template-columns: 1fr; gap: 3rem; } .project-grid:not(.is-even) { padding-bottom: 0; } .project-grid:not(.is-even) > :nth-child(even) { top: 0; }
   .testimonial-section { padding: 0 1.25rem 6rem; } .testimonial-card { padding: 3rem 1.4rem; }
   .cta-section { display: block; padding-top: 4rem; padding-bottom: 4.5rem; } .cta-copy h2 { font-size: clamp(3rem,14vw,5.5rem); } .cta-aside { margin-top: 2.5rem; }
   .site-footer { padding: 1.25rem; flex-wrap: wrap; gap: .9rem; }

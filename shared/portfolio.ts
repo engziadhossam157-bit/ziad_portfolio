@@ -309,6 +309,7 @@ export const PROJECTS: PortfolioProject[] = [
     ],
     ogImage: "/images/projects/thmarble/og.jpg",
     tint: "sand",
+    featured: true,
   },
 ];
 
