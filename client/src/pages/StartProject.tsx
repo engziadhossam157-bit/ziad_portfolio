@@ -17,7 +17,7 @@ const PROJECT_TYPES = [
   { value: "Desktop Application", label: "Desktop app", icon: Monitor },
   { value: "Other", label: "Something else", icon: Sparkles },
 ];
-const BUDGETS = ["Under $1,000", "$1,000 - $3,000", "$3,000 - $7,000", "$7,000+", "Not sure yet", "Other"];
+const BUDGETS = ["7k - 15k EGP", "15k - 30k EGP", "30k - 60k EGP", "60k+ EGP", "Not sure yet", "Other"];
 
 const NEXT_STEPS = [
   { title: "I read your brief", body: "Every request comes to me directly, and I note anything that needs clarifying." },
